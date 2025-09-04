@@ -1,0 +1,37 @@
+
+> anwalts-frontend-new@1.0.0 dev
+> nuxt dev
+
+[nuxi] Nuxt 4.0.3 with Nitro 2.12.4
+[get-port] Unable to find an available port (tried 3000 on host "0.0.0.0"). Using alternative port 3001.
+
+ 
+              █▀▀▀▀▀▀▀█▀▀▀▀█▀██▀█▀▀▀▀▀▀▀█
+              █ █▀▀▀█ ██▀█ ▄ ▀▀ █ █▀▀▀█ █
+              █ █   █ ███     ▄██ █   █ █
+              █ ▀▀▀▀▀ █▀▄▀▄▀▄ █▀█ ▀▀▀▀▀ █
+              █▀▀█▀▀█▀█▄ █ ▀▄▄▀██▀█████▀█
+              █ ▀ █ ▄▀█▀▀▄ ▄▀▀ ▄ ██  ▄▄▀█
+              █   █▄ ▀ ▀▀▀ ▄█▀▄▀  ▄█▄▄▄ █
+              █ ▀ █  ▀▀▄  ▄ ▄█ █▀█▄▄▀▀ ▀█
+              █ █ ▄▄▀▀▄█ █▀▄▀ ▀ ▀▀▀ █ ▀▄█
+              █▀▀▀▀▀▀▀█▄▀▄▀ █ ▄ █▀█ ▀█▄▀█
+              █ █▀▀▀█ █▀ ██▄▄▄▀ ▀▀▀ ▀█▀▄█
+              █ █   █ █▄█  ▄ ▀▄▄█▄▄▀▄▀  █
+              █ ▀▀▀▀▀ █  ▀▀▄█▀ ▀ ▄▄▄▀▄▄ █
+              ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+ 
+  ➜ Local:    http://0.0.0.0:3001/
+  ➜ Network:  http://148.251.195.222:3001/ [QR code]
+  ➜ Network:  http://172.18.0.1:3001/
+  ➜ Network:  http://172.19.0.1:3001/
+  ➜ Network:  http://172.26.0.1:3001/
+
+  ➜ DevTools: press Shift + Alt + D in the browser (v2.6.2)
+
+ℹ Nuxt Icon server bundle mode is set to local
+✔ Vite client built in 17ms
+✔ Vite server built in 20ms
+[nitro] ✔ Nuxt Nitro server built in 353ms
+ℹ Vite client warmed up in 1ms
+ℹ Vite server warmed up in 19ms

@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<title>Wohnraummietvertrag – Klassisch (Print)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  :root{
+    --ink:#0f172a; --muted:#465066; --border:#d7dbe4; --accent:#1e3a8a;
+  }
+  *{box-sizing:border-box}
+  html,body{background:#fff;color:var(--ink);font:14px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,'Noto Sans';}
+  .page{max-width:820px;margin:32px auto 64px;padding:0 12px}
+  header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid var(--accent);padding-bottom:10px;margin-bottom:16px}
+  .meta{font-size:12px;color:var(--muted);text-align:right}
+  h1{font-size:28px;margin:0 0 2px 0;letter-spacing:.2px}
+  .disclaimer{font-size:12px;color:var(--muted);margin-top:8px}
+  .section{margin:18px 0 14px}
+  .section h2{font-size:13px;text-transform:uppercase;letter-spacing:.12em;color:var(--accent);margin:0 0 6px 0}
+  .block{border:1px solid var(--border);padding:12px;border-radius:10px}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:4px 0}
+  .row.single{grid-template-columns:1fr}
+  .label{font-size:12px;color:var(--muted);margin-bottom:2px}
+  .blank{display:inline-block;border-bottom:1px dotted #999;min-width:220px;padding:2px 4px}
+  .blank.short{min-width:120px}
+  .pair{margin:6px 0}
+  .list{margin:0;padding-left:18px}
+  .signatures{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:22px}
+  .sigline{height:56px;border-bottom:1px solid #999;margin-bottom:6px}
+  footer{margin-top:28px;border-top:1px solid var(--border);padding-top:10px;font-size:12px;color:var(--muted)}
+  .actions{position:sticky;top:0;background:#fff;padding:8px 0 4px;margin-bottom:8px}
+  .btn{border:1px solid var(--border);background:#fff;padding:8px 12px;border-radius:10px;cursor:pointer}
+  @media print{
+    .actions{display:none}
+    header{margin-top:0}
+    .page{margin:0 auto}
+    .blank{border-bottom:1px solid #222}
+  }
+</style>
+</head>
+<body>
+  <div class="page">
+    <div class="actions no-print"><button class="btn" onclick="window.print()">Drucken</button></div>
+    <header>
+      <div>
+        <h1>Wohnraummietvertrag</h1>
+        <div class="disclaimer">Kein Ersatz für Rechtsberatung – bitte ggf. fachkundig prüfen lassen.</div>
+      </div>
+      <div class="meta">
+        <div><strong>Dokument-ID:</strong> MV-CL/01</div>
+        <div><strong>Stand:</strong> <span id="today"></span></div>
+      </div>
+    </header>
+
+    <section class="section">
+      <h2>Parteien</h2>
+      <div class="block">
+        <div class="pair"><span class="label">Vermieter</span><span class="blank">Name / Firma</span></div>
+        <div class="pair"><span class="label">Anschrift Vermieter</span><span class="blank" style="min-width:100%">Straße, PLZ Ort</span></div>
+        <div class="pair"><span class="label">Mieter 1</span><span class="blank">Name</span></div>
+        <div class="pair"><span class="label">Anschrift Mieter 1</span><span class="blank" style="min-width:100%">Straße, PLZ Ort</span></div>
+        <div class="pair"><span class="label">Mieter 2 (optional)</span><span class="blank">Name</span></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Mietobjekt &amp; Übergabe</h2>
+      <div class="block">
+        <div class="pair"><span class="label">Adresse des Mietobjekts</span><span class="blank" style="min-width:100%">Straße, Nr., PLZ Ort</span></div>
+        <div class="row">
+          <div><span class="label">Wohnfläche</span> <span class="blank short">qm</span></div>
+          <div><span class="label">Zimmer/Etage/Zubehör</span> <span class="blank">z. B. 3 ZKB, 2. OG, Keller, Stellplatz</span></div>
+        </div>
+        <div class="row">
+          <div><span class="label">Übergabe am</span> <span class="blank short">Datum</span></div>
+          <div><span class="label">Zustand bei Übergabe</span> <span class="blank">z. B. besenrein, Protokoll siehe Anlage</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Mietdauer</h2>
+      <div class="block">
+        <div class="row">
+          <div>Art: <span class="blank short">Unbefristet/Befristet</span></div>
+          <div>Beginn: <span class="blank short">Datum</span></div>
+        </div>
+        <div class="row single">
+          <div>Ende (falls befristet): <span class="blank short">Datum</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Miete &amp; Nebenkosten</h2>
+      <div class="block">
+        <div class="row">
+          <div>Nettokaltmiete: € <span class="blank short"></span></div>
+          <div>Betriebskosten-VZ: € <span class="blank short"></span></div>
+        </div>
+        <div class="row">
+          <div>Heizkosten-VZ: € <span class="blank short"></span></div>
+          <div>Fälligkeit: <span class="blank short">z. B. 3. Werktag</span></div>
+        </div>
+        <div class="row single">
+          <div>IBAN: <span class="blank" style="min-width:320px"></span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Kaution</h2>
+      <div class="block">
+        <div class="row">
+          <div>Betrag: € <span class="blank short"></span></div>
+          <div>Zahlungsweise/Anlage: <span class="blank"></span></div>
+        </div>
+        <ul class="list">
+          <li>Kaution max. 3 Nettokaltmieten (Raten möglich).</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Nutzung &amp; Hausordnung</h2>
+      <div class="block">
+        <div class="row single">Zweck (nur Wohnzwecke etc.): <span class="blank"></span></div>
+        <div class="row">Untermiete (Genehmigung): <span class="blank"></span></div>
+        <div class="row">Tierhaltung: <span class="blank"></span></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Instandhaltung / Schönheitsreparaturen</h2>
+      <div class="block">
+        <div class="row single">
+          <div>Zulässige Regelung (keine starren Fristen): <span class="blank" style="min-width:100%"></span></div>
+        </div>
+        <ul class="list">
+          <li>Nur transparente, zulässige Klauseln verwenden.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Kündigung / Fristen</h2>
+      <div class="block">
+        <div class="row single">
+          <div>Fristen gem. BGB: <span class="blank" style="min-width:100%"></span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Anlagen</h2>
+      <div class="block">
+        <div class="row single">Anlagen (z. B. Hausordnung, Übergabeprotokoll): <span class="blank" style="min-width:100%"></span></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Unterschriften</h2>
+      <div class="signatures">
+        <div>
+          <div class="sigline"></div>
+          <div>Ort, Datum</div>
+          <div>Unterschrift Vermieter (Name)</div>
+        </div>
+        <div>
+          <div class="sigline"></div>
+          <div>Ort, Datum</div>
+          <div>Unterschrift Mieter (Name)</div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      Kein Ersatz für Rechtsberatung. Prüfen Sie Klauseln auf aktuelle Rechtsprechung.
+    </footer>
+  </div>
+<script>
+  document.getElementById('today').textContent = new Date().toLocaleDateString('de-DE');
+</script>
+</body>
+</html>

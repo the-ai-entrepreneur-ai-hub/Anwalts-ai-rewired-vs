@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<title>Wohnraummietvertrag – Modern (Ausfüllbar)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  :root{
+    --ink:#0f172a; --muted:#465066; --border:#d7dbe4; --accent:#1e3a8a; --chip:#eef2ff;
+  }
+  *{box-sizing:border-box}
+  html,body{background:#fff;color:var(--ink);font:14px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,'Noto Sans'}
+  .wrap{max-width:920px;margin:24px auto;padding:0 12px}
+  header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+  h1{font-size:26px;margin:0 0 4px 0}
+  .meta{font-size:12px;color:var(--muted);text-align:right}
+  .pill{display:inline-block;background:var(--chip);color:var(--accent);padding:4px 8px;border-radius:999px;font-size:12px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .card{border:1px solid var(--border);border-radius:14px;padding:14px;box-shadow:0 6px 16px rgba(0,0,0,.06);margin:10px 0}
+  .card h2{font-size:13px;text-transform:uppercase;letter-spacing:.12em;color:var(--accent);margin:0 0 8px}
+  label{display:block;font-size:12px;color:var(--muted);margin:4px 0 2px}
+  input, textarea, select{
+    width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:10px;outline:none
+  }
+  textarea{min-height:72px;resize:vertical}
+  .actions{display:flex;gap:8px;position:sticky;top:0;background:#fff;padding:8px 0 4px}
+  .btn{border:1px solid var(--border);background:#fff;padding:8px 12px;border-radius:10px;cursor:pointer}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .row.single{grid-template-columns:1fr}
+  .note{font-size:12px;color:var(--muted)}
+  .signatures{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:10px}
+  .sig{display:flex;flex-direction:column;gap:6px}
+  .sig .line{height:56px;border-bottom:1px solid #999}
+  footer{margin-top:18px;font-size:12px;color:var(--muted);border-top:1px solid var(--border);padding-top:8px}
+  @media print{
+    .actions{display:none}
+    input, textarea, select{border:none;border-bottom:1px solid #000;border-radius:0;padding:2px 0}
+    .card{box-shadow:none}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="actions no-print">
+    <button class="btn" onclick="window.print()">Drucken</button>
+    <span class="pill">Dokument-ID: MV-MF/02 • <span id="stamp"></span></span>
+  </div>
+  <header>
+    <div>
+      <h1>Wohnraummietvertrag</h1>
+      <div class="note">Bitte sorgfältig ausfüllen. Kein Ersatz für Rechtsberatung.</div>
+    </div>
+    <div class="meta">
+      <div><strong>Stand:</strong> <span id="today"></span></div>
+    </div>
+  </header>
+
+  <section class="card">
+    <h2>Parteien</h2>
+    <div class="grid">
+      <div>
+        <label>Vermieter</label>
+        <input placeholder="Vor- und Nachname / Firma">
+      </div>
+      <div>
+        <label>Anschrift Vermieter</label>
+        <input placeholder="Straße, Nr., PLZ Ort">
+      </div>
+      <div>
+        <label>Mieter 1</label>
+        <input placeholder="Vor- und Nachname">
+      </div>
+      <div>
+        <label>Anschrift Mieter 1</label>
+        <input placeholder="Straße, Nr., PLZ Ort">
+      </div>
+      <div>
+        <label>Mieter 2 (optional)</label>
+        <input placeholder="Vor- und Nachname">
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Mietobjekt & Übergabe</h2>
+    <div class="grid">
+      <div>
+        <label>Adresse des Mietobjekts</label>
+        <input placeholder="Straße, Nr., PLZ Ort">
+      </div>
+      <div>
+        <label>Wohnfläche (qm)</label>
+        <input type="number" placeholder="z. B. 72">
+      </div>
+      <div>
+        <label>Zimmer/Etage/Zubehör</label>
+        <input placeholder="z. B. 3 ZKB, 2. OG, Keller, Stellplatz">
+      </div>
+      <div>
+        <label>Übergabe am</label>
+        <input type="date" id="uebergabe">
+      </div>
+      <div class="row single">
+        <div>
+          <label>Zustand bei Übergabe</label>
+          <textarea placeholder="z. B. besenrein; Protokoll in Anlage"></textarea>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Mietdauer</h2>
+    <div class="row">
+      <div>
+        <label>Art</label>
+        <select>
+          <option>Unbefristet</option>
+          <option>Befristet</option>
+        </select>
+      </div>
+      <div>
+        <label>Beginn</label>
+        <input type="date">
+      </div>
+      <div>
+        <label>Ende (falls befristet)</label>
+        <input type="date">
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Miete & Nebenkosten</h2>
+    <div class="row">
+      <div>
+        <label>Nettokaltmiete (€)</label>
+        <input type="number" step="0.01">
+      </div>
+      <div>
+        <label>Betriebskosten-Vorauszahlung (€)</label>
+        <input type="number" step="0.01">
+      </div>
+      <div>
+        <label>Heizkosten-Vorauszahlung (€)</label>
+        <input type="number" step="0.01">
+      </div>
+      <div>
+        <label>Fälligkeit</label>
+        <input placeholder="z. B. 3. Werktag">
+      </div>
+      <div class="row single">
+        <div>
+          <label>IBAN</label>
+          <input placeholder="DE.. .. .. .. .. .. .. .. .. ..">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Kaution</h2>
+    <div class="row">
+      <div>
+        <label>Betrag (€)</label>
+        <input type="number" step="0.01">
+      </div>
+      <div>
+        <label>Zahlungsweise/Anlage</label>
+        <input placeholder="Raten? Mietkautionskonto?">
+      </div>
+    </div>
+    <div class="note">Hinweis: Max. 3 Nettokaltmieten; Raten zulässig.</div>
+  </section>
+
+  <section class="card">
+    <h2>Nutzung & Hausordnung</h2>
+    <div class="row single">
+      <div>
+        <label>Zweck</label>
+        <input placeholder="Nur Wohnzwecke etc.">
+      </div>
+    </div>
+    <div class="row">
+      <div>
+        <label>Untermiete</label>
+        <input placeholder="Genehmigungserfordernis">
+      </div>
+      <div>
+        <label>Tierhaltung</label>
+        <input placeholder="Regelung">
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Instandhaltung / Schönheitsreparaturen</h2>
+    <div class="row single">
+      <div>
+        <label>Zulässige Regelung (keine starren Fristen)</label>
+        <textarea></textarea>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Kündigung / Fristen</h2>
+    <div class="row single">
+      <div>
+        <label>Fristen gem. BGB</label>
+        <textarea></textarea>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Anlagen</h2>
+    <div class="row single">
+      <div>
+        <label>Aufzählung (Hausordnung, Übergabeprotokoll …)</label>
+        <textarea></textarea>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Unterschriften</h2>
+    <div class="signatures">
+      <div class="sig">
+        <div class="line"></div>
+        <small>Ort, Datum – Vermieter (Name)</small>
+      </div>
+      <div class="sig">
+        <div class="line"></div>
+        <small>Ort, Datum – Mieter (Name)</small>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    Kein Ersatz für Rechtsberatung. Prüfen Sie Ihre Klauseln auf aktuelle Rechtsprechung.
+  </footer>
+</div>
+<script>
+  const today = new Date();
+  document.getElementById('today').textContent = today.toLocaleDateString('de-DE');
+  document.getElementById('stamp').textContent = today.toLocaleDateString('de-DE');
+</script>
+</body>
+</html>
