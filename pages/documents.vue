@@ -258,18 +258,7 @@ onMounted(() => {
   const $ = (s, r=document) => r.querySelector(s)
   const $$ = (s, r=document) => Array.from(r.querySelectorAll(s))
   const { public: { apiBase = '', apiEndpoints = {} } } = useRuntimeConfig()
-  // Early Tour init for Documents
-  try {
-    const docsTour = useTour({ storageKey: 'docsTourDismissed' })
-    docsTour.setSteps([
-      { sel: '#docType', text: '<b>Dokumenttyp</b><br/>Wählen oder benennen Sie den gewünschten Dokumenttyp.' },
-      { sel: '#requirements', text: '<b>Sachverhalt & Anforderungen</b><br/>Beschreiben Sie kurz den Fall und Vorgaben.' },
-      { sel: '#btnGenerate', text: '<b>Generieren</b><br/>Erstellt einen ersten Entwurf basierend auf Ihren Angaben.' },
-      { sel: '#previewContainer', text: '<b>Ergebnisbereich</b><br/>Hier erscheint das generierte Dokument mit Vorschau, Aktionen und Export.' }
-    ])
-    docsTour.attachDefaultHandlers()
-    document.addEventListener('click', (ev) => { const t = ev.target instanceof Element ? ev.target.closest('#btnHelp') : null; if (!t) return; ev.preventDefault?.(); docsTour.startTour() }, { capture: true })
-  } catch (e) { console.warn('Docs tour init failed:', e) }
+  // Tour will be initialized later in the main setup
   const proxyPostUrl = '/api/auth/proxy'
   const proxyGetUrl = '/api/auth/proxy'
   const proxyUploadUrl = '/api/auth/proxy-upload'
@@ -522,13 +511,11 @@ onMounted(() => {
     { sel: '#previewContainer', text: '<b>Ergebnisbereich</b><br/>Hier erscheint das generierte Dokument mit Vorschau, Aktionen und Export.' }
   ])
   docsTour.attachDefaultHandlers()
-  document.getElementById('btnHelp')?.addEventListener('click', () => docsTour.startTour())
-  document.addEventListener('click', (ev) => {
-    const t = ev.target instanceof Element ? ev.target.closest('#btnHelp') : null
-    if (!t) return
-    ev.preventDefault?.()
+  // Help button click handler - single clean implementation
+  document.getElementById('btnHelp')?.addEventListener('click', (e) => {
+    e.preventDefault()
     docsTour.startTour()
-  }, { capture: true })
+  })
 
   // Auto-start disabled, use Help button
 
