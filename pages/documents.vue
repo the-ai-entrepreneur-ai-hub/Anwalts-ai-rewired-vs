@@ -684,7 +684,6 @@ onMounted(async () => {
   templateButton?.addEventListener('click', handleTemplateOpen)
   cleanupFns.push(() => templateButton?.removeEventListener('click', handleTemplateOpen))
 
-  const handleTemplateClose = () => tplModal?.classList.remove('open')
   tplClose?.addEventListener('click', handleTemplateClose)
   cleanupFns.push(() => tplClose?.removeEventListener('click', handleTemplateClose))
 
