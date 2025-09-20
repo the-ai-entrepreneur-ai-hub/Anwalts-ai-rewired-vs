@@ -247,146 +247,564 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import { onMounted, onBeforeUnmount, watch } from 'vue'
+import { useHead } from '#imports'
 import { useTour } from '#imports'
-import { onMounted } from 'vue'
-import { useHead, useRuntimeConfig } from '#imports'
+
+import { useDocumentAssistantStore } from '~/stores/document-assistant'
+import { useAuthStore } from '~/stores/auth'
+import { TemplatesService } from '~/services/templates-service'
+import type { Template } from '~/types/template'
 
 definePageMeta({ layout: false, middleware: ['auth-guard'] })
 
-onMounted(() => {
-  const $ = (s, r=document) => r.querySelector(s)
-  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s))
-  const { public: { apiBase = '', apiEndpoints = {} } } = useRuntimeConfig()
-  // Tour will be initialized later in the main setup
-  const proxyPostUrl = '/api/auth/proxy'
-  const proxyGetUrl = '/api/auth/proxy'
-  const proxyUploadUrl = '/api/auth/proxy-upload'
-  const ep = {
-    generate: apiEndpoints.generate || (apiBase ? `${apiBase}/ai/generate-document` : ''),
-    generateSimple: apiBase ? `${apiBase}/ai/generate-document-simple` : '',
-    templates: apiEndpoints.templates || (apiBase ? `${apiBase}/templates` : ''),
-    upload: apiEndpoints.upload || '',
-    save: apiEndpoints.save || '',
-    exportBase: apiEndpoints.exportBase || '',
-    status: apiEndpoints.status || ''
-  }
+useHead({ title: 'Rechtsdokument-Assistent' })
 
-  function getAuthHeader() {
-    try {
-      let token = localStorage.getItem('token') || localStorage.getItem('access_token') || localStorage.getItem('sat') || localStorage.getItem('anwalts_auth_token')
-      if (!token && document && document.cookie) {
-        const map = Object.fromEntries(document.cookie.split(';').map(s => {
-          const i = s.indexOf('=');
-          const k = decodeURIComponent(s.slice(0, i).trim());
-          const v = decodeURIComponent(s.slice(i + 1));
-          return [k, v]
-        }))
-        token = map['token'] || map['access_token'] || map['sat'] || map['auth_token']
-      }
-      return token ? { Authorization: `Bearer ${decodeURIComponent(token)}` } : {}
-    } catch (_) { return {} }
-  }
+const store = useDocumentAssistantStore()
+const auth = useAuthStore()
 
-  async function proxyPost(path, bodyObj) {
-    const res = await fetch(proxyPostUrl, {
-      method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ path, method: 'POST', body: bodyObj })
-    })
-    if (!res.ok) throw new Error(`HTTP ${res.status}`)
-    return res
-  }
-  async function proxyGet(pathWithQuery) {
-    const url = proxyGetUrl + '?path=' + encodeURIComponent(pathWithQuery)
-    const res = await fetch(url, { credentials: 'include' })
-    if (!res.ok) throw new Error(`HTTP ${res.status}`)
-    return res
-  }
+const cleanupFns: Array<() => void> = []
+const stopWatchers: Array<() => void> = []
+let templateSearchTimer: ReturnType<typeof setTimeout> | null = null
 
-  let TEMPLATE_STORE = [
-    {
-      id: 'nda',
-      title: 'NDA – Standard (DE)',
-      category: 'Vertrag',
-      docType: 'Geheimhaltungsvereinbarung (NDA)',
-      prompt: 'Parteien, Zweck, Laufzeit, Vertragsstrafe, Gerichtsstand',
-      body: `
-<h2>Geheimhaltungsvereinbarung (NDA)</h2>
-<p>zwischen <strong>[PARTEI A]</strong>, [ADRESSE A], und <strong>[PARTEI B]</strong>, [ADRESSE B] (zusammen die "Parteien").</p>
-<h3>§ 1 Gegenstand</h3>
-<p>Die Parteien beabsichtigen, Informationen zum Zweck <strong>[ZWECK]</strong> auszutauschen. "Vertrauliche Informationen" sind alle nicht öffentlichen Informationen, gleich in welcher Form.</p>
-<h3>§ 2 Pflichten</h3>
-<p>Empfangende Partei: (a) nutzt Informationen nur zu dem genannten Zweck, (b) wahrt Vertraulichkeit mindestens mit derselben Sorgfalt wie eigene Informationen, (c) gibt sie nur an <strong>[KREIS DER EMPFÄNGER]</strong> weiter.</p>
-<h3>§ 3 Laufzeit</h3>
-<p>Diese Vereinbarung gilt ab Unterzeichnung für <strong>[LAUFZEIT]</strong>.</p>
-<h3>§ 4 Vertragsstrafe</h3>
-<p>Bei schuldhaftem Verstoß schuldet die verletzende Partei eine angemessene Vertragsstrafe <strong>[VERTRAGSSTRAFE]</strong>.</p>
-<h3>§ 5 Rückgabe</h3>
-<p>Auf Verlangen sind Kopien und Unterlagen unverzüglich zurückzugeben oder zu löschen.</p>
-<h3>§ 6 Schlussbestimmungen</h3>
-<p>Gerichtsstand: <strong>[GERICHTSSTAND]</strong>. Anwendbares Recht: <strong>[RECHT]</strong>. Änderungen bedürfen der Schriftform.</p>
-<p>Ort/Datum: [ORT], [DATUM] – Unterschriften: [PARTEI A], [PARTEI B]</p>`
-    },
-    {
-      id: 'klage',
-      title: 'Klageentwurf – Zivil',
-      category: 'Zivil',
-      docType: 'Klageentwurf (Zivilrecht)',
-      prompt: 'Parteien, Anspruch, Streitwert, Beweismittel, Anträge',
-      body: `
-<h2>Klage</h2>
-<p>des Klägers <strong>[KLÄGER]</strong>, gegen den Beklagten <strong>[BEKLAGTER]</strong>.</p>
-<h3>I. Zuständigkeit</h3>
-<p>Sachliche und örtliche Zuständigkeit: <strong>[ZUSTÄNDIGKEIT]</strong>.</p>
-<h3>II. Sachverhalt</h3>
-<p>[SACHVERHALT – CHRONOLOGIE]</p>
-<h3>III. Rechtliche Würdigung</h3>
-<p>Anspruchsgrundlagen: <strong>[ANSPRÜCHE]</strong>. Der Anspruch ist begründet, weil …</p>
-<h3>IV. Beweismittel</h3>
-<p>[BEWEISMITTEL (Urkunden, Zeugen, Sachverständige)]</p>
-<h3>V. Anträge</h3>
-<p>1. Der Beklagte wird verurteilt, an den Kläger <strong>[BETRAG]</strong> zu zahlen.<br>2. Hilfsweise: <strong>[HILFSANTRAG]</strong>.</p>
-<p>Streitwert: <strong>[STREITWERT]</strong>. Datum/Unterschrift.</p>`
-    },
-    {
-      id: 'abmahnung',
-      title: 'Abmahnung – UWG',
-      category: 'Wettbewerb',
-      docType: 'Abmahnung (UWG)',
-      prompt: 'Adressat, Verstoß, Unterlassung, Frist, Vertragsstrafe',
-      body: `
-<h2>Abmahnung</h2>
-<p>Adressat: <strong>[UNTERNEHMEN]</strong>, <strong>[ANSCHRIFT]</strong>.</p>
-<p>Sie bewerben/verwenden <strong>[VERSTOSS]</strong> und verstoßen damit gegen <strong>[RECHTSNORM]</strong>.</p>
-<h3>Forderungen</h3>
-<ol>
-<li>Abgabe einer strafbewehrten Unterlassungserklärung (Vertragsstrafe: <strong>[STRAFE]</strong>).</li>
-<li>Auskunft über Umfang der Handlung.</li>
-<li>Kostenersatz nach RVG aus <strong>[GEGENSTANDSWERT]</strong>.</li>
-</ol>
-<p>Frist: <strong>[FRIST]</strong>. Andernfalls gerichtliche Schritte.</p>`
-    },
-    {
-      id: 'vergleich',
-      title: 'Vergleichsangebot',
-      category: 'Zivil',
-      docType: 'Vergleichsangebot',
-      prompt: 'Zahlung, Bedingungen, Verzicht, Vertraulichkeit, Datum',
-      body: `
-<h2>Vergleichsangebot</h2>
-<p>Zwischen <strong>[PARTEI A]</strong> und <strong>[PARTEI B]</strong>.</p>
-<h3>1. Leistung</h3>
-<p>[PARTEI A] zahlt an [PARTEI B] <strong>[BETRAG]</strong> bis <strong>[FÄLLIGKEIT]</strong>.</p>
-<h3>2. Gegenseitiger Verzicht</h3>
-<p>Mit Erfüllung sind sämtliche Ansprüche erledigt.</p>
-<h3>3. Vertraulichkeit</h3>
-<p>Inhalt dieses Vergleichs ist vertraulich.</p>
-<h3>4. Schluss</h3>
-<p>Gerichtsstand <strong>[GERICHTSSTAND]</strong>. Datum/Unterschrift.</p>`
+function formatSize(bytes?: number | null): string {
+  if (!bytes || Number.isNaN(bytes)) return ''
+  if (bytes < 1024) return `${bytes} B`
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
+  if (bytes < 1024 * 1024 * 1024) return `${(bytes / 1024 / 1024).toFixed(1)} MB`
+  return `${(bytes / 1024 / 1024 / 1024).toFixed(1)} GB`
+}
+
+function currentCsrf() {
+  return auth.csrfToken || undefined
+}
+
+function setUploadMessage(el: HTMLElement | null) {
+  if (!el) return
+  let message = ''
+  if (store.upload.status === 'uploading') {
+    message = `Lade hoch … ${store.upload.progress}%`
+    if (store.upload.lastFile) {
+      message += ` · ${store.upload.lastFile.name}`
     }
-  ]
+  } else if (store.upload.status === 'success' && store.upload.current) {
+    const { filename, size } = store.upload.current
+    message = `Hochgeladen: ${filename}`
+    const formatted = formatSize(size)
+    if (formatted) message += ` (${formatted})`
+  } else if (store.upload.status === 'error' && store.upload.error) {
+    message = store.upload.error
+  }
+  if (store.errors.banner && store.errors.banner !== message) {
+    message = store.errors.banner
+  }
+  if (message) {
+    el.textContent = message
+    el.classList.remove('hidden')
+  } else {
+    el.textContent = ''
+    el.classList.add('hidden')
+  }
+}
 
-  let SELECTED_TEMPLATE = null
+function updateClauseButtons(buttons: HTMLButtonElement[]) {
+  const selected = new Set(store.configuration.selectedClauses)
+  buttons.forEach((button) => {
+    const clause = button.getAttribute('data-clause') || ''
+    const isActive = selected.has(clause)
+    button.setAttribute('aria-pressed', isActive ? 'true' : 'false')
+    if (isActive) {
+      button.style.background = 'var(--primary)'
+      button.style.color = '#fff'
+      button.style.borderColor = 'var(--primary)'
+    } else {
+      button.style.background = '#fff'
+      button.style.color = ''
+      button.style.borderColor = '#e0e6ed'
+    }
+  })
+}
+
+function setPreviewVisibility(preview: HTMLElement | null, empty: HTMLElement | null, actionBar: HTMLElement | null) {
+  const hasContent = store.preview.sanitizedHtml.trim().length > 0 && store.generation.status === 'success'
+  if (hasContent) {
+    preview?.classList.remove('hidden')
+    if (preview) preview.style.display = ''
+    empty?.classList.add('hidden')
+    actionBar?.classList.remove('hidden')
+    if (actionBar) actionBar.style.display = 'flex'
+  } else {
+    preview?.classList.add('hidden')
+    if (preview) preview.style.display = 'none'
+    empty?.classList.remove('hidden')
+    actionBar?.classList.add('hidden')
+    if (actionBar) actionBar.style.display = 'none'
+  }
+}
+
+function attachKeyboardShortcuts(generateHandler: () => void, copyHandler: () => void, closeTemplates: () => void) {
+  const handler = (event: KeyboardEvent) => {
+    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'enter') {
+      event.preventDefault()
+      generateHandler()
+    }
+    if (event.altKey && event.key.toLowerCase() === 'c') {
+      event.preventDefault()
+      copyHandler()
+    }
+    if (event.key === 'Escape') {
+      closeTemplates()
+    }
+  }
+  document.addEventListener('keydown', handler)
+  cleanupFns.push(() => document.removeEventListener('keydown', handler))
+}
+
+function renderTemplateCards(container: HTMLElement | null, templates: Template[], apply: (id: string) => void, preview: (id: string) => void) {
+  if (!container) return
+  container.innerHTML = ''
+  templates.forEach((tpl) => {
+    const card = document.createElement('div')
+    card.className = 'p-4 rounded-lg bg-gray-50 border border-gray-200 flex flex-col'
+    card.innerHTML = `
+      <div class="flex items-start justify-between gap-3">
+        <div>
+          <div class="font-medium text-gray-900">${tpl.name}</div>
+          <div class="text-xs text-gray-500 line-clamp-3">${tpl.instructions || ''}</div>
+        </div>
+        <span class="inline-block px-2 py-1 rounded-full text-xs bg-[rgba(91,124,230,0.12)] text-[color:var(--primary)]">${tpl.category}</span>
+      </div>
+      <div class="mt-3 flex items-center gap-2">
+        <button class="btn-primary px-3 py-2 rounded-md text-sm" data-apply="${tpl.id}">Übernehmen</button>
+        <button class="btn-secondary px-3 py-2 rounded-md text-sm" data-preview="${tpl.id}">Vorschau</button>
+      </div>`
+    if (store.templates.selectedId === tpl.id) {
+      card.classList.add('ring-2', 'ring-[color:var(--primary)]')
+    }
+    container.appendChild(card)
+  })
+  container.querySelectorAll<HTMLButtonElement>('[data-apply]').forEach((button) => {
+    const id = button.getAttribute('data-apply') || ''
+    const handler = () => apply(id)
+    button.addEventListener('click', handler)
+    cleanupFns.push(() => button.removeEventListener('click', handler))
+  })
+  container.querySelectorAll<HTMLButtonElement>('[data-preview]').forEach((button) => {
+    const id = button.getAttribute('data-preview') || ''
+    const handler = () => preview(id)
+    button.addEventListener('click', handler)
+    cleanupFns.push(() => button.removeEventListener('click', handler))
+  })
+}
+
+onMounted(async () => {
+  await auth.fetchStatus()
+  store.hydrateTemplateSelection()
+
+  const docsTour = useTour({ storageKey: 'docsTourDismissed' })
+  docsTour.setSteps([
+    { sel: '#docType', text: '<b>Dokumenttyp</b><br/>Wählen oder benennen Sie den gewünschten Dokumenttyp.' },
+    { sel: '#requirements', text: '<b>Sachverhalt & Anforderungen</b><br/>Beschreiben Sie kurz den Fall und Vorgaben.' },
+    { sel: '#btnGenerate', text: '<b>Generieren</b><br/>Erstellt einen ersten Entwurf basierend auf Ihren Angaben.' },
+    { sel: '#previewContainer', text: '<b>Ergebnisbereich</b><br/>Hier erscheint das generierte Dokument mit Vorschau, Aktionen und Export.' },
+  ])
+  docsTour.attachDefaultHandlers()
+  const helpHandler = () => docsTour.startTour()
+  document.getElementById('btnHelp')?.addEventListener('click', helpHandler)
+  cleanupFns.push(() => document.getElementById('btnHelp')?.removeEventListener('click', helpHandler))
+
+  const dropzone = document.getElementById('dropzone') as HTMLElement | null
+  const fileInput = document.getElementById('fileInput') as HTMLInputElement | null
+  const uploadInfo = document.getElementById('uploadInfo') as HTMLElement | null
+  const docTypeInput = document.getElementById('docType') as HTMLInputElement | null
+  const requirementsTextarea = document.getElementById('requirements') as HTMLTextAreaElement | null
+  const charCountEl = document.getElementById('charCount') as HTMLElement | null
+  const switchLegal = document.getElementById('switchLegalTone') as HTMLInputElement | null
+  const switchPlain = document.getElementById('switchPlain') as HTMLInputElement | null
+  const templateButton = document.getElementById('btnTemplates') as HTMLButtonElement | null
+  const clearButton = document.getElementById('btnClear') as HTMLButtonElement | null
+  const generateButton = document.getElementById('btnGenerate') as HTMLButtonElement | null
+  const clearUploadButton = document.getElementById('btnClearUpload') as HTMLButtonElement | null
+  const copyButton = document.getElementById('btnCopy') as HTMLButtonElement | null
+  const editButton = document.getElementById('btnEdit') as HTMLButtonElement | null
+  const saveButton = document.getElementById('btnSave') as HTMLButtonElement | null
+  const approveButton = document.getElementById('btnApprove') as HTMLButtonElement | null
+  const rejectButton = document.getElementById('btnReject') as HTMLButtonElement | null
+  const acceptButton = document.getElementById('btnAccept') as HTMLButtonElement | null
+  const exportDocxButton = document.getElementById('btnExport') as HTMLButtonElement | null
+  const exportPdfButton = document.getElementById('btnExportPdf') as HTMLButtonElement | null
+  const previewEl = document.getElementById('preview') as HTMLElement | null
+  const previewEmpty = document.getElementById('previewEmpty') as HTMLElement | null
+  const previewSkeleton = document.getElementById('previewSkeleton') as HTMLElement | null
+  const genOverlay = document.getElementById('genOverlay') as HTMLElement | null
+  const actionBar = document.getElementById('actionBar') as HTMLElement | null
+  const wordCountEl = document.getElementById('wordCount') as HTMLElement | null
+  const clauseButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-clause]'))
+  const tplModal = document.getElementById('tplModal') as HTMLElement | null
+  const tplClose = document.getElementById('tplClose') as HTMLButtonElement | null
+  const tplSearch = document.getElementById('tplSearch') as HTMLInputElement | null
+  const tplGrid = document.getElementById('tplGrid') as HTMLElement | null
+
+  const docTypeLabel = docTypeInput?.previousElementSibling as HTMLElement | null
+  const requirementsLabel = requirementsTextarea?.previousElementSibling?.querySelector('label') as HTMLElement | null
+
+  const openFileDialog = () => fileInput?.click()
+  dropzone?.addEventListener('click', openFileDialog)
+  cleanupFns.push(() => dropzone?.removeEventListener('click', openFileDialog))
+
+  const handleDragOver = (event: DragEvent) => {
+    event.preventDefault()
+    dropzone?.classList.add('dragover')
+  }
+  const handleDragLeave = () => dropzone?.classList.remove('dragover')
+  const handleDrop = (event: DragEvent) => {
+    event.preventDefault()
+    dropzone?.classList.remove('dragover')
+    const file = event.dataTransfer?.files?.[0]
+    if (file) {
+      void store.uploadFile(file, { csrfToken: currentCsrf() })
+    }
+  }
+  dropzone?.addEventListener('dragover', handleDragOver)
+  dropzone?.addEventListener('dragleave', handleDragLeave)
+  dropzone?.addEventListener('drop', handleDrop)
+  cleanupFns.push(() => {
+    dropzone?.removeEventListener('dragover', handleDragOver)
+    dropzone?.removeEventListener('dragleave', handleDragLeave)
+    dropzone?.removeEventListener('drop', handleDrop)
+  })
+
+  const handleFileChange = (event: Event) => {
+    const target = event.target as HTMLInputElement
+    const file = target.files?.[0]
+    if (file) {
+      void store.uploadFile(file, { csrfToken: currentCsrf() })
+    }
+  }
+  fileInput?.addEventListener('change', handleFileChange)
+  cleanupFns.push(() => fileInput?.removeEventListener('change', handleFileChange))
+
+  const handleDocTypeInput = (event: Event) => {
+    const value = (event.target as HTMLInputElement).value
+    store.setDocType(value)
+  }
+  docTypeInput?.addEventListener('input', handleDocTypeInput)
+  cleanupFns.push(() => docTypeInput?.removeEventListener('input', handleDocTypeInput))
+
+  const handleRequirementsInput = (event: Event) => {
+    const value = (event.target as HTMLTextAreaElement).value
+    store.setRequirements(value)
+  }
+  requirementsTextarea?.addEventListener('input', handleRequirementsInput)
+  cleanupFns.push(() => requirementsTextarea?.removeEventListener('input', handleRequirementsInput))
+
+  const handleChecklist = () => {
+    const sample = '• Beteiligte Parteien (Namen, Adressen)\n• Wesentliche Bedingungen (z. B. Preis, Laufzeit)\n• Besondere Anforderungen (z. B. Geheimhaltung, Vertragsstrafe)\n• Fristen/Termine (konkretes Datum oder Zeitraum)'
+    const currentValue = store.configuration.requirements
+    if (!currentValue.includes('Beteiligte Parteien')) {
+      const nextValue = currentValue ? `${currentValue}\n${sample}` : sample
+      store.setRequirements(nextValue)
+      if (requirementsTextarea) requirementsTextarea.value = nextValue
+    }
+  }
+  document.getElementById('btnInsertChecklist')?.addEventListener('click', handleChecklist)
+  cleanupFns.push(() => document.getElementById('btnInsertChecklist')?.removeEventListener('click', handleChecklist))
+
+  const handleLegalToggle = () => store.toggleLegalTone()
+  const handlePlainToggle = () => store.togglePlainLanguage()
+  switchLegal?.addEventListener('change', handleLegalToggle)
+  switchPlain?.addEventListener('change', handlePlainToggle)
+  cleanupFns.push(() => {
+    switchLegal?.removeEventListener('change', handleLegalToggle)
+    switchPlain?.removeEventListener('change', handlePlainToggle)
+  })
+
+  clauseButtons.forEach((button) => {
+    const clause = button.getAttribute('data-clause') || ''
+    const handler = () => {
+      store.toggleClause(clause)
+    }
+    button.addEventListener('click', handler)
+    cleanupFns.push(() => button.removeEventListener('click', handler))
+  })
+
+  const handleGenerate = async () => {
+    try {
+      await store.generateDocument({ csrfToken: currentCsrf() })
+    } catch (error) {
+      console.error('Generierung fehlgeschlagen', error)
+    }
+  }
+
+  const handleCopy = async () => {
+    try {
+      await store.copyPreview()
+      if (copyButton) {
+        const original = copyButton.textContent
+        copyButton.textContent = 'Kopiert'
+        setTimeout(() => { if (copyButton) copyButton.textContent = original || 'Kopieren' }, 1200)
+      }
+    } catch (error) {
+      console.warn('Kopieren fehlgeschlagen', error)
+    }
+  }
+
+  const handleTemplateClose = () => tplModal?.classList.remove('open')
+
+  attachKeyboardShortcuts(handleGenerate, handleCopy, handleTemplateClose)
+
+  generateButton?.addEventListener('click', handleGenerate)
+  cleanupFns.push(() => generateButton?.removeEventListener('click', handleGenerate))
+
+  const handleClear = () => {
+    store.setDocType('')
+    if (docTypeInput) docTypeInput.value = ''
+    store.setRequirements('')
+    if (requirementsTextarea) requirementsTextarea.value = ''
+    store.configuration.selectedClauses = []
+    store.configuration.templateId = null
+    store.persistTemplateSelection(null)
+    void store.resetUpload()
+    setUploadMessage(uploadInfo)
+  }
+  clearButton?.addEventListener('click', handleClear)
+  cleanupFns.push(() => clearButton?.removeEventListener('click', handleClear))
+
+  const handleClearUpload = () => {
+    void store.resetUpload()
+    setUploadMessage(uploadInfo)
+  }
+  clearUploadButton?.addEventListener('click', handleClearUpload)
+  cleanupFns.push(() => clearUploadButton?.removeEventListener('click', handleClearUpload))
+
+  copyButton?.addEventListener('click', handleCopy)
+  cleanupFns.push(() => copyButton?.removeEventListener('click', handleCopy))
+
+  editButton?.addEventListener('click', () => {
+    store.toggleEditing()
+    if (editButton) {
+      editButton.classList.toggle('ring-2', store.preview.isEditing)
+      editButton.classList.toggle('ring-[color:var(--primary)]', store.preview.isEditing)
+    }
+  })
+  cleanupFns.push(() => editButton?.removeEventListener('click', () => {}))
+
+  saveButton?.addEventListener('click', async () => {
+    try {
+      await store.saveDocument({ csrfToken: currentCsrf() })
+      if (saveButton) {
+        const original = saveButton.textContent
+        saveButton.textContent = 'Gespeichert'
+        setTimeout(() => { if (saveButton && original) saveButton.textContent = original }, 1500)
+      }
+    } catch (error) {
+      console.error('Speichern fehlgeschlagen', error)
+    }
+  })
+  cleanupFns.push(() => saveButton?.removeEventListener('click', () => {}))
+
+  const handleApprove = () => { void store.updateWorkflowStatus('approved', { csrfToken: currentCsrf() }) }
+  const handleReject = () => { void store.updateWorkflowStatus('rejected', { csrfToken: currentCsrf() }) }
+  const handleAccept = () => { void store.updateWorkflowStatus('accepted', { csrfToken: currentCsrf() }) }
+  approveButton?.addEventListener('click', handleApprove)
+  rejectButton?.addEventListener('click', handleReject)
+  acceptButton?.addEventListener('click', handleAccept)
+  cleanupFns.push(() => {
+    approveButton?.removeEventListener('click', handleApprove)
+    rejectButton?.removeEventListener('click', handleReject)
+    acceptButton?.removeEventListener('click', handleAccept)
+  })
+
+  const handleExportDocx = async () => {
+    try {
+      const result = await store.exportDocument('docx', { csrfToken: currentCsrf() })
+      const url = URL.createObjectURL(result.blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = result.filename
+      document.body.appendChild(a)
+      a.click()
+      a.remove()
+      URL.revokeObjectURL(url)
+    } catch (error) {
+      console.error('DOCX-Export fehlgeschlagen', error)
+    }
+  }
+  exportDocxButton?.addEventListener('click', handleExportDocx)
+  cleanupFns.push(() => exportDocxButton?.removeEventListener('click', handleExportDocx))
+
+  const handleExportPdf = async () => {
+    try {
+      const result = await store.exportDocument('pdf', { csrfToken: currentCsrf() })
+      const url = URL.createObjectURL(result.blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = result.filename
+      document.body.appendChild(a)
+      a.click()
+      a.remove()
+      URL.revokeObjectURL(url)
+    } catch (error) {
+      console.error('PDF-Export fehlgeschlagen', error)
+    }
+  }
+  exportPdfButton?.addEventListener('click', handleExportPdf)
+  cleanupFns.push(() => exportPdfButton?.removeEventListener('click', handleExportPdf))
+
+  const handleTemplateOpen = async () => {
+    tplModal?.classList.add('open')
+    setUploadMessage(uploadInfo)
+    const response = await store.loadTemplates({ useCache: true })
+    renderTemplateCards(tplGrid, response.templates, async (id) => {
+      try {
+        await store.applyTemplate(id, { csrfToken: currentCsrf() })
+        if (docTypeInput) docTypeInput.value = store.configuration.docType
+        if (requirementsTextarea) requirementsTextarea.value = store.configuration.requirements
+        tplModal?.classList.remove('open')
+      } catch (error) {
+        console.error('Vorlage konnte nicht angewendet werden', error)
+      }
+    }, async (id) => {
+      try {
+        const previewData = await TemplatesService.previewTemplate(id)
+        if (tplGrid) {
+          tplGrid.querySelectorAll('[data-preview-content]')?.forEach((node) => node.remove())
+        }
+        const previewCard = document.createElement('div')
+        previewCard.setAttribute('data-preview-content', 'true')
+        previewCard.className = 'md:col-span-2 border border-gray-200 rounded-lg p-4 bg-white'
+        previewCard.innerHTML = `<div class="text-sm text-gray-500">Template-Vorschau</div><div class="prose max-w-none mt-2">${previewData.previewContent}</div>`
+        tplGrid?.prepend(previewCard)
+      } catch (error) {
+        console.error('Vorlage konnte nicht geladen werden', error)
+      }
+    })
+  }
+  templateButton?.addEventListener('click', handleTemplateOpen)
+  cleanupFns.push(() => templateButton?.removeEventListener('click', handleTemplateOpen))
+
+  const handleTemplateClose = () => tplModal?.classList.remove('open')
+  tplClose?.addEventListener('click', handleTemplateClose)
+  cleanupFns.push(() => tplClose?.removeEventListener('click', handleTemplateClose))
+
+  const handleTemplateSearch = (event: Event) => {
+    const term = (event.target as HTMLInputElement).value
+    if (templateSearchTimer) clearTimeout(templateSearchTimer)
+    templateSearchTimer = setTimeout(async () => {
+      const response = await store.searchTemplates(term)
+      renderTemplateCards(tplGrid, response.templates ?? store.templates.items, async (id) => {
+        await store.applyTemplate(id, { csrfToken: currentCsrf() })
+        if (docTypeInput) docTypeInput.value = store.configuration.docType
+        if (requirementsTextarea) requirementsTextarea.value = store.configuration.requirements
+        tplModal?.classList.remove('open')
+      }, async (id) => {
+        const previewData = await TemplatesService.previewTemplate(id)
+        const previewCard = document.createElement('div')
+        previewCard.className = 'md:col-span-2 border border-gray-200 rounded-lg p-4 bg-white'
+        previewCard.innerHTML = `<div class="text-sm text-gray-500">Template-Vorschau</div><div class="prose max-w-none mt-2">${previewData.previewContent}</div>`
+        tplGrid?.prepend(previewCard)
+      })
+    }, 300)
+  }
+  tplSearch?.addEventListener('input', handleTemplateSearch)
+  cleanupFns.push(() => tplSearch?.removeEventListener('input', handleTemplateSearch))
+
+  stopWatchers.push(watch(() => store.upload.status, () => setUploadMessage(uploadInfo)))
+  stopWatchers.push(watch(() => store.upload.error, () => setUploadMessage(uploadInfo)))
+  stopWatchers.push(watch(() => store.upload.progress, () => setUploadMessage(uploadInfo)))
+  stopWatchers.push(watch(() => store.errors.banner, () => setUploadMessage(uploadInfo)))
+
+  stopWatchers.push(watch(() => store.configuration.charCount, (count) => {
+    if (charCountEl) {
+      const message = store.fieldErrorMessage('requirements')
+      charCountEl.textContent = message ? `${count} Zeichen · ${message}` : `${count} Zeichen`
+    }
+  }, { immediate: true }))
+
+  stopWatchers.push(watch(() => store.configuration.docType, (value) => {
+    if (docTypeInput && docTypeInput.value !== value) docTypeInput.value = value
+    if (docTypeLabel) {
+      const message = store.fieldErrorMessage('docType')
+      docTypeLabel.textContent = message ? `Dokumenttyp · ${message}` : 'Dokumenttyp'
+    }
+  }, { immediate: true }))
+
+  stopWatchers.push(watch(() => store.configuration.requirements, (value) => {
+    if (requirementsTextarea && requirementsTextarea.value !== value) requirementsTextarea.value = value
+    if (requirementsLabel) {
+      const message = store.fieldErrorMessage('requirements')
+      requirementsLabel.textContent = message ? `Sachverhalt & Anforderungen · ${message}` : 'Sachverhalt & Anforderungen'
+    }
+  }, { immediate: true }))
+
+  stopWatchers.push(watch(() => [store.configuration.legalTone, store.configuration.plainLanguage], ([legal, plain]) => {
+    if (switchLegal) switchLegal.checked = legal
+    if (switchPlain) switchPlain.checked = plain
+  }, { immediate: true }))
+
+  stopWatchers.push(watch(() => store.configuration.selectedClauses.slice(), () => updateClauseButtons(clauseButtons), { immediate: true }))
+
+  stopWatchers.push(watch(() => store.preview.sanitizedHtml, (html) => {
+    if (previewEl) previewEl.innerHTML = html
+    setPreviewVisibility(previewEl, previewEmpty, actionBar)
+  }))
+
+  stopWatchers.push(watch(() => store.preview.wordCount, (count) => {
+    if (wordCountEl) wordCountEl.textContent = `${count} Wörter`
+  }, { immediate: true }))
+
+  stopWatchers.push(watch(() => store.preview.isEditing, (isEditing) => {
+    if (previewEl) previewEl.setAttribute('contenteditable', isEditing ? 'true' : 'false')
+  }, { immediate: true }))
+
+  stopWatchers.push(watch(() => store.preview.html, (html) => {
+    if (previewEl && store.preview.isEditing && previewEl.innerHTML !== html) {
+      previewEl.innerHTML = html
+    }
+  }))
+
+  stopWatchers.push(watch(() => store.generation.status, (status) => {
+    const isLoading = status === 'loading'
+    previewSkeleton?.classList.toggle('hidden', !isLoading)
+    genOverlay?.classList.toggle('hidden', !isLoading)
+    if (docTypeInput) docTypeInput.disabled = isLoading
+    if (requirementsTextarea) requirementsTextarea.disabled = isLoading
+    clauseButtons.forEach((btn) => { btn.disabled = isLoading })
+    if (switchLegal) switchLegal.disabled = isLoading
+    if (switchPlain) switchPlain.disabled = isLoading
+    setPreviewVisibility(previewEl, previewEmpty, actionBar)
+  }, { immediate: true }))
+
+  stopWatchers.push(watch(() => store.workflow.status, (status) => {
+    if (approveButton) approveButton.disabled = status === 'approved' || status === 'accepted'
+    if (acceptButton) acceptButton.disabled = status !== 'approved'
+    if (rejectButton) rejectButton.disabled = status === 'rejected'
+  }, { immediate: true }))
+
+  if (previewEl) {
+    const editableHandler = (event: Event) => {
+      if (store.preview.isEditing) {
+        store.updatePreviewContent((event.target as HTMLElement).innerHTML)
+      }
+    }
+    previewEl.addEventListener('input', editableHandler)
+    cleanupFns.push(() => previewEl.removeEventListener('input', editableHandler))
+  }
+
+  setUploadMessage(uploadInfo)
+  setPreviewVisibility(previewEl, previewEmpty, actionBar)
+})
+
+onBeforeUnmount(() => {
+  cleanupFns.splice(0).forEach((fn) => {
+    try { fn() } catch (error) { console.error('cleanup failed', error) }
+  })
+  stopWatchers.splice(0).forEach((stop) => {
+    try { stop() } catch (error) { console.error('watcher stop failed', error) }
+  })
+  if (templateSearchTimer) clearTimeout(templateSearchTimer)
+})
 
   function renderTemplates(list){
     const grid = document.getElementById('tplGrid')
@@ -511,11 +929,13 @@ onMounted(() => {
     { sel: '#previewContainer', text: '<b>Ergebnisbereich</b><br/>Hier erscheint das generierte Dokument mit Vorschau, Aktionen und Export.' }
   ])
   docsTour.attachDefaultHandlers()
-  // Help button click handler - single clean implementation
-  document.getElementById('btnHelp')?.addEventListener('click', (e) => {
-    e.preventDefault()
+  document.getElementById('btnHelp')?.addEventListener('click', () => docsTour.startTour())
+  document.addEventListener('click', (ev) => {
+    const t = ev.target instanceof Element ? ev.target.closest('#btnHelp') : null
+    if (!t) return
+    ev.preventDefault?.()
     docsTour.startTour()
-  })
+  }, { capture: true })
 
   // Auto-start disabled, use Help button
 
