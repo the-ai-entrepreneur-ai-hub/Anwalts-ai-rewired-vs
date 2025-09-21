@@ -1,4 +1,4 @@
-import { d as defineEventHandler, f as readMultipartFormData, h as setResponseStatus, e as getCookie } from '../../../nitro/nitro.mjs';
+import { d as defineEventHandler, h as readMultipartFormData, i as setResponseStatus, f as getCookie, e as buildBackendUrl } from '../../../nitro/nitro.mjs';
 import 'node:http';
 import 'node:https';
 import 'node:events';
@@ -27,7 +27,7 @@ const proxyUpload_post = defineEventHandler(async (event) => {
     const push = (s) => chunks.push(typeof s === "string" ? Buffer.from(s) : s);
     push(`--${boundary}\r
 `);
-    push(`Content-Disposition: form-data; name="file"; filename="${filePart.filename}"\r
+    push(`Content-Disposition: form-data; name=file; filename=${filePart.filename}\r
 `);
     push(`Content-Type: ${filePart.type || "application/octet-stream"}\r
 \r
@@ -39,7 +39,7 @@ const proxyUpload_post = defineEventHandler(async (event) => {
     const authToken = getCookie(event, "auth_token");
     const headers = { "Content-Type": `multipart/form-data; boundary=${boundary}` };
     if (authToken) headers["Authorization"] = `Bearer ${authToken}`;
-    const backendUrl = "http://172.19.0.4:8000/api/files/upload";
+    const backendUrl = buildBackendUrl(event, "/api/files/upload");
     const res = await fetch(backendUrl, { method: "POST", headers, body: Buffer.concat(chunks) });
     const text = await res.text();
     setResponseStatus(event, res.status);

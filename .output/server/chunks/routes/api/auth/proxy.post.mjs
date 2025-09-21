@@ -1,4 +1,4 @@
-import { d as defineEventHandler, r as readBody, h as setResponseStatus, g as getHeader, e as getCookie } from '../../../nitro/nitro.mjs';
+import { d as defineEventHandler, r as readBody, i as setResponseStatus, j as resolveBackendBase, g as getHeader, f as getCookie } from '../../../nitro/nitro.mjs';
 import 'node:http';
 import 'node:https';
 import 'node:events';
@@ -20,7 +20,8 @@ const proxy_post = defineEventHandler(async (event) => {
       setResponseStatus(event, 400);
       return { error: "Invalid path" };
     }
-    const backendUrl = "http://172.19.0.4:8000" + path.replace(/^\/api\//, "/api/");
+    const backendBase = resolveBackendBase(event);
+    const backendUrl = backendBase + path.replace(/^\/api\//, "/api/");
     const incomingAuth = getHeader(event, "authorization");
     const cookieToken = getCookie(event, "auth_token");
     const headers = { "Content-Type": "application/json", "Accept": "application/json" };

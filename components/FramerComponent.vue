@@ -2,7 +2,7 @@
   <div ref="containerRef"></div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted, nextTick } from 'vue'
 
 interface Props {

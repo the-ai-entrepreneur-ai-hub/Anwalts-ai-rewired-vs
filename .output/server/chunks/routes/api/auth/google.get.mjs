@@ -26,7 +26,8 @@ const google_get = defineEventHandler(async (event) => {
   authUrl.searchParams.set("client_id", clientId);
   authUrl.searchParams.set("redirect_uri", redirectUri);
   authUrl.searchParams.set("response_type", "code");
-  authUrl.searchParams.set("scope", "openid email profile");
+  authUrl.searchParams.set("scope", "openid email profile https://www.googleapis.com/auth/gmail.readonly");
+  authUrl.searchParams.set("include_granted_scopes", "true");
   authUrl.searchParams.set("access_type", "offline");
   authUrl.searchParams.set("prompt", "consent");
   await sendRedirect(event, authUrl.toString(), 302);

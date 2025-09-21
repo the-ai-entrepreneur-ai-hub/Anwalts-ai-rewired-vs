@@ -43,6 +43,15 @@ const callback_get = defineEventHandler(async (event) => {
       await sendRedirect(event, "/?error=token_failed", 302);
       return;
     }
+    if (tokens.refresh_token) {
+      setCookie(event, "gmail_rt", tokens.refresh_token, {
+        httpOnly: true,
+        secure: !isLocal,
+        sameSite: "none",
+        path: "/",
+        maxAge: 60 * 60 * 24 * 30
+      });
+    }
     const userResponse = await fetch(`https://www.googleapis.com/oauth2/v2/userinfo?access_token=${tokens.access_token}`);
     const userData = await userResponse.json();
     setCookie(event, "auth_token", `google_${userData.id}_${Date.now()}`, {

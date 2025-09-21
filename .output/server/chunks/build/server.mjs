@@ -1,10 +1,10 @@
-import { defineComponent, shallowRef, h, resolveComponent, computed, hasInjectionContext, getCurrentInstance, inject, createElementBlock, provide, cloneVNode, defineAsyncComponent, ref, Suspense, Fragment, createApp, shallowReactive, reactive, withCtx, createTextVNode, toRef, onErrorCaptured, onServerPrefetch, unref, createVNode, resolveDynamicComponent, effectScope, isReadonly, isRef, isShallow, isReactive, toRaw, mergeProps, getCurrentScope, useSSRContext } from 'vue';
-import { v as parseQuery, c as createError$1, w as klona, x as defuFn, y as hasProtocol, z as isScriptProtocol, A as joinURL, B as withQuery, C as sanitizeStatusCode, D as withTrailingSlash, E as withoutTrailingSlash, F as getContext, $ as $fetch$1, G as baseURL, H as createHooks, I as executeAsync, J as toRouteMatcher, K as createRouter$1, L as defu } from '../nitro/nitro.mjs';
-import { createPinia, setActivePinia, shouldHydrate } from 'pinia';
+import { defineComponent, shallowRef, h, resolveComponent, computed, hasInjectionContext, getCurrentInstance, inject, createElementBlock, provide, cloneVNode, defineAsyncComponent, ref, Suspense, Fragment, useSSRContext, createApp, shallowReactive, mergeProps, reactive, withCtx, createTextVNode, unref, createVNode, resolveDynamicComponent, toRef, onErrorCaptured, onServerPrefetch, effectScope, isReadonly, isRef, isShallow, isReactive, toRaw, getCurrentScope } from 'vue';
+import { y as parseQuery, z as getRequestHeaders, c as createError$1, A as klona, B as defuFn, C as hasProtocol, D as isScriptProtocol, E as joinURL, F as withQuery, G as sanitizeStatusCode, H as withTrailingSlash, I as withoutTrailingSlash, J as getContext, $ as $fetch$1, K as baseURL, L as createHooks, M as executeAsync, N as toRouteMatcher, O as createRouter$1, P as defu } from '../nitro/nitro.mjs';
+import { defineStore, storeToRefs, createPinia, setActivePinia, shouldHydrate } from 'pinia';
 import { RouterView, createMemoryHistory, createRouter, START_LOCATION } from 'vue-router';
 import colors from 'tailwindcss/colors';
 import { _api, addAPIProvider, setCustomIconsLoader } from '@iconify/vue';
-import { ssrRenderTeleport, ssrInterpolate, ssrRenderAttr, ssrIncludeBooleanAttr, ssrLooseContain, ssrRenderComponent, ssrRenderSuspense, ssrRenderVNode, ssrRenderAttrs } from 'vue/server-renderer';
+import { ssrRenderAttrs, ssrInterpolate, ssrRenderAttr, ssrRenderDynamicModel, ssrIncludeBooleanAttr, ssrLooseContain, ssrRenderComponent, ssrRenderTeleport, ssrRenderList, ssrRenderClass, ssrRenderVNode, ssrRenderSuspense } from 'vue/server-renderer';
 import { u as useHead$1, h as headSymbol } from '../routes/renderer.mjs';
 import 'node:http';
 import 'node:https';
@@ -415,12 +415,6 @@ const unhead_k2P3m_ZDyjlr2mMYnoDPwavjsDN8hBlk9cFai0bbopU = /* @__PURE__ */ defin
 function toArray(value) {
   return Array.isArray(value) ? value : [value];
 }
-const __nuxt_page_meta$d = {
-  layout: false
-};
-const __nuxt_page_meta$c = {
-  layout: false
-};
 const __nuxt_page_meta$b = {
   layout: false
 };
@@ -433,8 +427,12 @@ const __nuxt_page_meta$9 = {
 const __nuxt_page_meta$8 = {
   layout: false
 };
-const __nuxt_page_meta$7 = { layout: false };
-const __nuxt_page_meta$6 = { layout: false };
+const __nuxt_page_meta$7 = {
+  layout: false
+};
+const __nuxt_page_meta$6 = {
+  layout: false
+};
 const __nuxt_page_meta$5 = { layout: false };
 const __nuxt_page_meta$4 = { layout: false };
 const __nuxt_page_meta$3 = { layout: false };
@@ -449,64 +447,73 @@ const __nuxt_page_meta = {
 };
 const _routes = [
   {
+    name: "email",
+    path: "/email",
+    component: () => import('./email-BZKFXBvq.mjs')
+  },
+  {
     name: "index",
     path: "/",
-    meta: __nuxt_page_meta$d || {},
-    component: () => import('./index-Daw06NRI.mjs')
+    meta: __nuxt_page_meta$b || {},
+    component: () => import('./index-BHAmJq76.mjs')
   },
   {
     name: "terms",
     path: "/terms",
-    meta: __nuxt_page_meta$c || {},
-    component: () => import('./terms-FRh3z_hr.mjs')
+    meta: __nuxt_page_meta$a || {},
+    component: () => import('./terms-BKB_BTD3.mjs')
   },
   {
     name: "contact",
     path: "/contact",
-    meta: __nuxt_page_meta$b || {},
-    component: () => import('./contact-l2HowBd8.mjs')
+    meta: __nuxt_page_meta$9 || {},
+    component: () => import('./contact-BkGNploN.mjs')
   },
   {
     name: "privacy",
     path: "/privacy",
-    meta: __nuxt_page_meta$a || {},
-    component: () => import('./privacy-C4kA7qcu.mjs')
+    meta: __nuxt_page_meta$8 || {},
+    component: () => import('./privacy-TBevu6Rp.mjs')
   },
   {
     name: "register",
     path: "/register",
-    meta: __nuxt_page_meta$9 || {},
-    component: () => import('./register-B4AwViP7.mjs')
+    meta: __nuxt_page_meta$7 || {},
+    component: () => import('./register-DM5crRzO.mjs')
+  },
+  {
+    name: "assistant",
+    path: "/assistant",
+    component: () => import('./assistant-ewff9Ejl.mjs')
   },
   {
     name: "changelog",
     path: "/changelog",
-    meta: __nuxt_page_meta$8 || {},
-    component: () => import('./changelog-Da2J74-r.mjs')
+    meta: __nuxt_page_meta$6 || {},
+    component: () => import('./changelog-CLBxCpST.mjs')
   },
   {
     name: "dashboard",
     path: "/dashboard",
-    meta: { ...__nuxt_page_meta$4 || {}, ...{ "middleware": ["auth-guard"] } },
-    component: () => import('./dashboard-CXSg_fXB.mjs'),
+    meta: { "middleware": ["dashboard-auth"] },
+    component: () => import('./dashboard-DUFoPYJd.mjs'),
     children: [
       {
         name: "dashboard-cases",
         path: "cases",
-        meta: __nuxt_page_meta$7 || {},
-        component: () => import('./cases-DqVAnqYE.mjs')
+        component: () => import('./cases-1zlMLQ2d.mjs')
       },
       {
         name: "dashboard-research",
         path: "research",
-        meta: __nuxt_page_meta$6 || {},
-        component: () => import('./research-CHgj3YX3.mjs')
+        meta: __nuxt_page_meta$5 || {},
+        component: () => import('./research-C5LvIOKP.mjs')
       },
       {
         name: "dashboard-settings",
         path: "settings",
-        meta: __nuxt_page_meta$5 || {},
-        component: () => import('./settings-B8CEEa6M.mjs')
+        meta: __nuxt_page_meta$4 || {},
+        component: () => import('./settings-CsjBk77X.mjs')
       }
     ]
   },
@@ -514,25 +521,35 @@ const _routes = [
     name: "documents",
     path: "/documents",
     meta: { ...__nuxt_page_meta$3 || {}, ...{ "middleware": ["auth-guard"] } },
-    component: () => import('./documents-_HzOwOGV.mjs')
+    component: () => import('./documents-xC9L1OsQ.mjs')
+  },
+  {
+    name: "templates",
+    path: "/templates",
+    component: () => import('./templates-DkFSlR9G.mjs')
   },
   {
     name: "test-auth",
     path: "/test-auth",
     meta: __nuxt_page_meta$2 || {},
-    component: () => import('./test-auth-Ca_QtHEK.mjs')
+    component: () => import('./test-auth-DcCgmskc.mjs')
   },
   {
     name: "test-login",
     path: "/test-login",
     meta: __nuxt_page_meta$1 || {},
-    component: () => import('./test-login-aNAdaR34.mjs')
+    component: () => import('./test-login-hDayUz8P.mjs')
+  },
+  {
+    name: "templates-old",
+    path: "/templates-old",
+    component: () => import('./templates-old-BgH5kuo7.mjs')
   },
   {
     name: "framer-preview",
     path: "/framer-preview",
     meta: __nuxt_page_meta || {},
-    component: () => import('./framer-preview-BJILZ4PT.mjs')
+    component: () => import('./framer-preview--oaCeIoB.mjs')
   }
 ];
 const ROUTE_KEY_PARENTHESES_RE = /(:\w+)\([^)]+\)/g;
@@ -640,231 +657,6 @@ const validate = /* @__PURE__ */ defineNuxtRouteMiddleware(async (to, from) => {
   });
   return error;
 });
-const manifest_45route_45rule = /* @__PURE__ */ defineNuxtRouteMiddleware(async (to) => {
-  {
-    return;
-  }
-});
-const globalMiddleware = [
-  validate,
-  manifest_45route_45rule
-];
-const namedMiddleware = {
-  "auth-guard": () => import('./auth-guard-gu5rgFlW.mjs')
-};
-const plugin$1 = /* @__PURE__ */ defineNuxtPlugin({
-  name: "nuxt:router",
-  enforce: "pre",
-  async setup(nuxtApp) {
-    let __temp, __restore;
-    let routerBase = (/* @__PURE__ */ useRuntimeConfig()).app.baseURL;
-    const history = routerOptions.history?.(routerBase) ?? createMemoryHistory(routerBase);
-    const routes = routerOptions.routes ? ([__temp, __restore] = executeAsync(() => routerOptions.routes(_routes)), __temp = await __temp, __restore(), __temp) ?? _routes : _routes;
-    let startPosition;
-    const router = createRouter({
-      ...routerOptions,
-      scrollBehavior: (to, from, savedPosition) => {
-        if (from === START_LOCATION) {
-          startPosition = savedPosition;
-          return;
-        }
-        if (routerOptions.scrollBehavior) {
-          router.options.scrollBehavior = routerOptions.scrollBehavior;
-          if ("scrollRestoration" in (void 0).history) {
-            const unsub = router.beforeEach(() => {
-              unsub();
-              (void 0).history.scrollRestoration = "manual";
-            });
-          }
-          return routerOptions.scrollBehavior(to, START_LOCATION, startPosition || savedPosition);
-        }
-      },
-      history,
-      routes
-    });
-    nuxtApp.vueApp.use(router);
-    const previousRoute = shallowRef(router.currentRoute.value);
-    router.afterEach((_to, from) => {
-      previousRoute.value = from;
-    });
-    Object.defineProperty(nuxtApp.vueApp.config.globalProperties, "previousRoute", {
-      get: () => previousRoute.value
-    });
-    const initialURL = nuxtApp.ssrContext.url;
-    const _route = shallowRef(router.currentRoute.value);
-    const syncCurrentRoute = () => {
-      _route.value = router.currentRoute.value;
-    };
-    nuxtApp.hook("page:finish", syncCurrentRoute);
-    router.afterEach((to, from) => {
-      if (to.matched[0]?.components?.default === from.matched[0]?.components?.default) {
-        syncCurrentRoute();
-      }
-    });
-    const route = {};
-    for (const key in _route.value) {
-      Object.defineProperty(route, key, {
-        get: () => _route.value[key],
-        enumerable: true
-      });
-    }
-    nuxtApp._route = shallowReactive(route);
-    nuxtApp._middleware ||= {
-      global: [],
-      named: {}
-    };
-    useError();
-    if (!nuxtApp.ssrContext?.islandContext) {
-      router.afterEach(async (to, _from, failure) => {
-        delete nuxtApp._processingMiddleware;
-        if (failure) {
-          await nuxtApp.callHook("page:loading:end");
-        }
-        if (failure?.type === 4) {
-          return;
-        }
-        if (to.redirectedFrom && to.fullPath !== initialURL) {
-          await nuxtApp.runWithContext(() => navigateTo(to.fullPath || "/"));
-        }
-      });
-    }
-    try {
-      if (true) {
-        ;
-        [__temp, __restore] = executeAsync(() => router.push(initialURL)), await __temp, __restore();
-        ;
-      }
-      ;
-      [__temp, __restore] = executeAsync(() => router.isReady()), await __temp, __restore();
-      ;
-    } catch (error2) {
-      [__temp, __restore] = executeAsync(() => nuxtApp.runWithContext(() => showError(error2))), await __temp, __restore();
-    }
-    const resolvedInitialRoute = router.currentRoute.value;
-    syncCurrentRoute();
-    if (nuxtApp.ssrContext?.islandContext) {
-      return { provide: { router } };
-    }
-    const initialLayout = nuxtApp.payload.state._layout;
-    router.beforeEach(async (to, from) => {
-      await nuxtApp.callHook("page:loading:start");
-      to.meta = reactive(to.meta);
-      if (nuxtApp.isHydrating && initialLayout && !isReadonly(to.meta.layout)) {
-        to.meta.layout = initialLayout;
-      }
-      nuxtApp._processingMiddleware = true;
-      if (!nuxtApp.ssrContext?.islandContext) {
-        const middlewareEntries = /* @__PURE__ */ new Set([...globalMiddleware, ...nuxtApp._middleware.global]);
-        for (const component of to.matched) {
-          const componentMiddleware = component.meta.middleware;
-          if (!componentMiddleware) {
-            continue;
-          }
-          for (const entry2 of toArray(componentMiddleware)) {
-            middlewareEntries.add(entry2);
-          }
-        }
-        {
-          const routeRules = await nuxtApp.runWithContext(() => getRouteRules({ path: to.path }));
-          if (routeRules.appMiddleware) {
-            for (const key in routeRules.appMiddleware) {
-              if (routeRules.appMiddleware[key]) {
-                middlewareEntries.add(key);
-              } else {
-                middlewareEntries.delete(key);
-              }
-            }
-          }
-        }
-        for (const entry2 of middlewareEntries) {
-          const middleware = typeof entry2 === "string" ? nuxtApp._middleware.named[entry2] || await namedMiddleware[entry2]?.().then((r) => r.default || r) : entry2;
-          if (!middleware) {
-            throw new Error(`Unknown route middleware: '${entry2}'.`);
-          }
-          try {
-            const result = await nuxtApp.runWithContext(() => middleware(to, from));
-            if (true) {
-              if (result === false || result instanceof Error) {
-                const error2 = result || createError({
-                  statusCode: 404,
-                  statusMessage: `Page Not Found: ${initialURL}`
-                });
-                await nuxtApp.runWithContext(() => showError(error2));
-                return false;
-              }
-            }
-            if (result === true) {
-              continue;
-            }
-            if (result === false) {
-              return result;
-            }
-            if (result) {
-              if (isNuxtError(result) && result.fatal) {
-                await nuxtApp.runWithContext(() => showError(result));
-              }
-              return result;
-            }
-          } catch (err) {
-            const error2 = createError(err);
-            if (error2.fatal) {
-              await nuxtApp.runWithContext(() => showError(error2));
-            }
-            return error2;
-          }
-        }
-      }
-    });
-    router.onError(async () => {
-      delete nuxtApp._processingMiddleware;
-      await nuxtApp.callHook("page:loading:end");
-    });
-    router.afterEach(async (to, _from) => {
-      if (to.matched.length === 0) {
-        await nuxtApp.runWithContext(() => showError(createError({
-          statusCode: 404,
-          fatal: false,
-          statusMessage: `Page not found: ${to.fullPath}`,
-          data: {
-            path: to.fullPath
-          }
-        })));
-      }
-    });
-    nuxtApp.hooks.hookOnce("app:created", async () => {
-      try {
-        if ("name" in resolvedInitialRoute) {
-          resolvedInitialRoute.name = void 0;
-        }
-        await router.replace({
-          ...resolvedInitialRoute,
-          force: true
-        });
-        router.options.scrollBehavior = routerOptions.scrollBehavior;
-      } catch (error2) {
-        await nuxtApp.runWithContext(() => showError(error2));
-      }
-    });
-    return { provide: { router } };
-  }
-});
-const reducers = [
-  ["NuxtError", (data) => isNuxtError(data) && data.toJSON()],
-  ["EmptyShallowRef", (data) => isRef(data) && isShallow(data) && !data.value && (typeof data.value === "bigint" ? "0n" : JSON.stringify(data.value) || "_")],
-  ["EmptyRef", (data) => isRef(data) && !data.value && (typeof data.value === "bigint" ? "0n" : JSON.stringify(data.value) || "_")],
-  ["ShallowRef", (data) => isRef(data) && isShallow(data) && data.value],
-  ["ShallowReactive", (data) => isReactive(data) && isShallow(data) && toRaw(data)],
-  ["Ref", (data) => isRef(data) && data.value],
-  ["Reactive", (data) => isReactive(data) && toRaw(data)]
-];
-const revive_payload_server_MVtmlZaQpj6ApFmshWfUWl5PehCebzaBf2NuRMiIbms = /* @__PURE__ */ defineNuxtPlugin({
-  name: "nuxt:revive-payload:server",
-  setup() {
-    for (const [reducer, fn] of reducers) {
-      definePayloadReducer(reducer, fn);
-    }
-  }
-});
 defineComponent({
   name: "ServerPlaceholder",
   render() {
@@ -927,6 +719,26 @@ function useState(...args) {
     state.value = initialValue;
   }
   return state;
+}
+function useRequestEvent(nuxtApp) {
+  nuxtApp ||= useNuxtApp();
+  return nuxtApp.ssrContext?.event;
+}
+function useRequestHeaders(include) {
+  const event = useRequestEvent();
+  const _headers = event ? getRequestHeaders(event) : {};
+  if (!include || !event) {
+    return _headers;
+  }
+  const headers = /* @__PURE__ */ Object.create(null);
+  for (const _key of include) {
+    const key = _key.toLowerCase();
+    const header = _headers[key];
+    if (header) {
+      headers[key] = header;
+    }
+  }
+  return headers;
 }
 const firstNonUndefined = (...args) => args.find((arg) => arg !== void 0);
 // @__NO_SIDE_EFFECTS__
@@ -1445,6 +1257,515 @@ function useAppConfig() {
   nuxtApp._appConfig ||= klona(__appConfig);
   return nuxtApp._appConfig;
 }
+const DEFAULT_CSRF = "stub-csrf-token";
+const authApi = {
+  async login(payload) {
+    return $fetch("/api/auth/login", {
+      method: "POST",
+      credentials: "include",
+      body: {
+        email: payload.email,
+        password: payload.password,
+        remember_me: payload.rememberMe ?? false,
+        csrf_token: payload.csrfToken || DEFAULT_CSRF,
+        device_fingerprint: payload.deviceFingerprint || null
+      }
+    });
+  },
+  async register(payload) {
+    return $fetch("/api/auth/register", {
+      method: "POST",
+      credentials: "include",
+      body: {
+        email: payload.email,
+        password: payload.password,
+        first_name: payload.first_name,
+        last_name: payload.last_name,
+        title: payload.title,
+        firm_name: payload.firm_name,
+        terms_accepted: payload.terms_accepted,
+        csrf_token: payload.csrfToken || DEFAULT_CSRF
+      }
+    });
+  },
+  async refresh(payload = {}) {
+    return $fetch("/api/auth/refresh", {
+      method: "POST",
+      credentials: "include",
+      body: { csrf_token: payload.csrfToken || DEFAULT_CSRF }
+    });
+  },
+  async logout(payload = {}) {
+    return $fetch("/api/auth/logout", {
+      method: "POST",
+      credentials: "include",
+      body: { csrf_token: payload.csrfToken || DEFAULT_CSRF }
+    });
+  },
+  async status() {
+    return $fetch("/api/auth/status", { credentials: "include" });
+  },
+  async debugSessions(params = {}) {
+    return $fetch("/api/auth/debug/sessions", {
+      credentials: "include",
+      query: params
+    });
+  },
+  async debugLogs(params = {}) {
+    return $fetch("/api/auth/debug/logs", {
+      credentials: "include",
+      query: params
+    });
+  },
+  async initiateGoogleOAuth(redirectUri, state) {
+    return $fetch("/api/auth/oauth/google/initiate", {
+      method: "POST",
+      credentials: "include",
+      body: {
+        redirect_uri: redirectUri,
+        state: state ?? null
+      }
+    });
+  }
+};
+function extractErrorMessage(err, fallback) {
+  if (err?.data?.error?.message) return err.data.error.message;
+  if (err?.data?.statusMessage) return err.data.statusMessage;
+  if (err?.data?.message) return err.data.message;
+  if (err?.data?.detail?.message) return err.data.detail.message;
+  if (err?.message) return err.message;
+  return fallback;
+}
+const useAuthStore = defineStore("auth", {
+  state: () => ({
+    isAuthenticated: false,
+    isLoading: false,
+    user: null,
+    session: null,
+    tokens: null,
+    csrfToken: null,
+    sessionExpiresAt: null,
+    authError: null,
+    showAuthModal: false,
+    authModalView: "login",
+    isSubmitting: false,
+    redirectAfterAuth: "/dashboard",
+    lastStatusCheck: null
+  }),
+  actions: {
+    open(view = "login", redirect) {
+      this.authModalView = view;
+      this.showAuthModal = true;
+      this.authError = null;
+      if (redirect) this.redirectAfterAuth = redirect;
+    },
+    setView(next) {
+      this.authModalView = next;
+      this.authError = null;
+    },
+    close() {
+      this.showAuthModal = false;
+      this.authError = null;
+    },
+    setRedirect(path) {
+      this.redirectAfterAuth = path || "/dashboard";
+    },
+    async fetchStatus(force = false) {
+      if (this.isSubmitting) return;
+      if (!force && this.lastStatusCheck && Date.now() - this.lastStatusCheck < 3e4) return;
+      this.isLoading = true;
+      this.authError = null;
+      try {
+        const res = await authApi.status();
+        this.isAuthenticated = !!res?.authenticated;
+        this.user = res?.user || null;
+        this.session = res?.session || null;
+        this.tokens = this.isAuthenticated ? this.tokens : null;
+        this.sessionExpiresAt = res?.session?.expires_at || null;
+        if (res?.csrf_token) this.csrfToken = res.csrf_token;
+        else if (this.isAuthenticated && !this.csrfToken) this.csrfToken = DEFAULT_CSRF;
+      } catch (err) {
+        this.isAuthenticated = false;
+        this.user = null;
+        this.session = null;
+        this.tokens = null;
+        this.csrfToken = null;
+        if (force) this.authError = extractErrorMessage(err, "Sitzung konnte nicht geprüft werden");
+      } finally {
+        this.isLoading = false;
+        this.lastStatusCheck = Date.now();
+      }
+    },
+    async ensureAuthenticated(options = {}) {
+      if (!this.isAuthenticated) {
+        await this.fetchStatus(true);
+      }
+      if (!this.isAuthenticated) {
+        if (options.redirect) this.setRedirect(options.redirect);
+        this.open("login", options.redirect);
+        throw new Error("UNAUTHORIZED");
+      }
+    },
+    async login(payload) {
+      this.isSubmitting = true;
+      this.authError = null;
+      try {
+        const res = await authApi.login({
+          email: payload.email,
+          password: payload.password,
+          rememberMe: payload.remember,
+          csrfToken: this.csrfToken || DEFAULT_CSRF
+        });
+        this.applyAuthResponse(res);
+        await this.afterAuthSuccess();
+      } catch (err) {
+        this.authError = extractErrorMessage(err, "Login fehlgeschlagen");
+        throw err;
+      } finally {
+        this.isSubmitting = false;
+      }
+    },
+    async register(payload) {
+      this.isSubmitting = true;
+      this.authError = null;
+      try {
+        const res = await authApi.register({
+          email: payload.email,
+          password: payload.password,
+          first_name: payload.first_name,
+          last_name: payload.last_name,
+          title: payload.title,
+          firm_name: payload.firm_name,
+          terms_accepted: payload.terms_accepted,
+          csrfToken: DEFAULT_CSRF
+        });
+        this.applyAuthResponse(res);
+        await this.afterAuthSuccess();
+      } catch (err) {
+        this.authError = extractErrorMessage(err, "Registrierung fehlgeschlagen");
+        throw err;
+      } finally {
+        this.isSubmitting = false;
+      }
+    },
+    async loginWithGoogle() {
+      try {
+        const redirectUri = `${(void 0).location.origin}/api/auth/google/callback`;
+        const res = await authApi.initiateGoogleOAuth(redirectUri);
+        if ("auth_url" in res && res.auth_url) {
+          (void 0).location.href = res.auth_url;
+          return;
+        }
+      } catch (err) {
+        console.error("Google OAuth start failed", err);
+        this.authError = extractErrorMessage(err, "Google Anmeldung nicht verfügbar");
+      }
+    },
+    async logout() {
+      try {
+        await authApi.logout({ csrfToken: this.csrfToken || DEFAULT_CSRF });
+      } finally {
+        this.resetState();
+      }
+    },
+    async refreshSession() {
+      try {
+        const csrfToken = this.csrfToken || DEFAULT_CSRF;
+        const res = await authApi.refresh({ csrfToken });
+        this.applyAuthResponse(res);
+        return res;
+      } catch (err) {
+        this.resetState();
+        throw err;
+      }
+    },
+    applyAuthResponse(data, csrfToken) {
+      this.isAuthenticated = true;
+      this.user = data.user;
+      this.session = data.session;
+      this.sessionExpiresAt = data.session?.expires_at || null;
+      this.tokens = data.tokens;
+      if (csrfToken) this.csrfToken = csrfToken;
+      else if (!this.csrfToken) this.csrfToken = DEFAULT_CSRF;
+    },
+    resetState() {
+      this.isAuthenticated = false;
+      this.user = null;
+      this.session = null;
+      this.tokens = null;
+      this.sessionExpiresAt = null;
+      this.csrfToken = null;
+      this.showAuthModal = false;
+      this.authModalView = "login";
+    },
+    async afterAuthSuccess() {
+      await this.fetchStatus(true);
+      this.close();
+      this.redirectAfterAuth || "/dashboard";
+      this.setRedirect("/dashboard");
+    }
+  }
+});
+const PUBLIC_ROUTES = /* @__PURE__ */ new Set([
+  "/",
+  "/privacy",
+  "/terms",
+  "/contact",
+  "/changelog",
+  "/landing",
+  "/landing-alt",
+  "/framer-preview",
+  "/test-login",
+  "/test-auth"
+]);
+const auth_45global = /* @__PURE__ */ defineNuxtRouteMiddleware(async (to) => {
+  let __temp, __restore;
+  if (PUBLIC_ROUTES.has(to.path)) return;
+  const queryAuth = Array.isArray(to.query.auth) ? to.query.auth[0] : to.query.auth;
+  if (queryAuth === "success") return;
+  useAuthStore();
+  {
+    try {
+      const headers = useRequestHeaders(["cookie"]);
+      const status = ([__temp, __restore] = executeAsync(() => $fetch("/api/auth/status", {
+        headers,
+        credentials: "include"
+      })), __temp = await __temp, __restore(), __temp);
+      if (status?.authenticated) return;
+    } catch (_) {
+    }
+    const target = new URL(to.fullPath, "http://localhost");
+    if (!target.searchParams.has("auth")) target.searchParams.set("auth", "required");
+    return navigateTo(target.pathname + "?" + target.searchParams.toString(), { redirectCode: 302 });
+  }
+});
+const manifest_45route_45rule = /* @__PURE__ */ defineNuxtRouteMiddleware(async (to) => {
+  {
+    return;
+  }
+});
+const globalMiddleware = [
+  validate,
+  auth_45global,
+  manifest_45route_45rule
+];
+const namedMiddleware = {
+  "auth-guard": () => import('./auth-guard-96V_-WS9.mjs'),
+  "dashboard-auth": () => import('./dashboard-auth-DPibFTzT.mjs')
+};
+const plugin$1 = /* @__PURE__ */ defineNuxtPlugin({
+  name: "nuxt:router",
+  enforce: "pre",
+  async setup(nuxtApp) {
+    let __temp, __restore;
+    let routerBase = (/* @__PURE__ */ useRuntimeConfig()).app.baseURL;
+    const history = routerOptions.history?.(routerBase) ?? createMemoryHistory(routerBase);
+    const routes = routerOptions.routes ? ([__temp, __restore] = executeAsync(() => routerOptions.routes(_routes)), __temp = await __temp, __restore(), __temp) ?? _routes : _routes;
+    let startPosition;
+    const router = createRouter({
+      ...routerOptions,
+      scrollBehavior: (to, from, savedPosition) => {
+        if (from === START_LOCATION) {
+          startPosition = savedPosition;
+          return;
+        }
+        if (routerOptions.scrollBehavior) {
+          router.options.scrollBehavior = routerOptions.scrollBehavior;
+          if ("scrollRestoration" in (void 0).history) {
+            const unsub = router.beforeEach(() => {
+              unsub();
+              (void 0).history.scrollRestoration = "manual";
+            });
+          }
+          return routerOptions.scrollBehavior(to, START_LOCATION, startPosition || savedPosition);
+        }
+      },
+      history,
+      routes
+    });
+    nuxtApp.vueApp.use(router);
+    const previousRoute = shallowRef(router.currentRoute.value);
+    router.afterEach((_to, from) => {
+      previousRoute.value = from;
+    });
+    Object.defineProperty(nuxtApp.vueApp.config.globalProperties, "previousRoute", {
+      get: () => previousRoute.value
+    });
+    const initialURL = nuxtApp.ssrContext.url;
+    const _route = shallowRef(router.currentRoute.value);
+    const syncCurrentRoute = () => {
+      _route.value = router.currentRoute.value;
+    };
+    nuxtApp.hook("page:finish", syncCurrentRoute);
+    router.afterEach((to, from) => {
+      if (to.matched[0]?.components?.default === from.matched[0]?.components?.default) {
+        syncCurrentRoute();
+      }
+    });
+    const route = {};
+    for (const key in _route.value) {
+      Object.defineProperty(route, key, {
+        get: () => _route.value[key],
+        enumerable: true
+      });
+    }
+    nuxtApp._route = shallowReactive(route);
+    nuxtApp._middleware ||= {
+      global: [],
+      named: {}
+    };
+    useError();
+    if (!nuxtApp.ssrContext?.islandContext) {
+      router.afterEach(async (to, _from, failure) => {
+        delete nuxtApp._processingMiddleware;
+        if (failure) {
+          await nuxtApp.callHook("page:loading:end");
+        }
+        if (failure?.type === 4) {
+          return;
+        }
+        if (to.redirectedFrom && to.fullPath !== initialURL) {
+          await nuxtApp.runWithContext(() => navigateTo(to.fullPath || "/"));
+        }
+      });
+    }
+    try {
+      if (true) {
+        ;
+        [__temp, __restore] = executeAsync(() => router.push(initialURL)), await __temp, __restore();
+        ;
+      }
+      ;
+      [__temp, __restore] = executeAsync(() => router.isReady()), await __temp, __restore();
+      ;
+    } catch (error2) {
+      [__temp, __restore] = executeAsync(() => nuxtApp.runWithContext(() => showError(error2))), await __temp, __restore();
+    }
+    const resolvedInitialRoute = router.currentRoute.value;
+    syncCurrentRoute();
+    if (nuxtApp.ssrContext?.islandContext) {
+      return { provide: { router } };
+    }
+    const initialLayout = nuxtApp.payload.state._layout;
+    router.beforeEach(async (to, from) => {
+      await nuxtApp.callHook("page:loading:start");
+      to.meta = reactive(to.meta);
+      if (nuxtApp.isHydrating && initialLayout && !isReadonly(to.meta.layout)) {
+        to.meta.layout = initialLayout;
+      }
+      nuxtApp._processingMiddleware = true;
+      if (!nuxtApp.ssrContext?.islandContext) {
+        const middlewareEntries = /* @__PURE__ */ new Set([...globalMiddleware, ...nuxtApp._middleware.global]);
+        for (const component of to.matched) {
+          const componentMiddleware = component.meta.middleware;
+          if (!componentMiddleware) {
+            continue;
+          }
+          for (const entry2 of toArray(componentMiddleware)) {
+            middlewareEntries.add(entry2);
+          }
+        }
+        {
+          const routeRules = await nuxtApp.runWithContext(() => getRouteRules({ path: to.path }));
+          if (routeRules.appMiddleware) {
+            for (const key in routeRules.appMiddleware) {
+              if (routeRules.appMiddleware[key]) {
+                middlewareEntries.add(key);
+              } else {
+                middlewareEntries.delete(key);
+              }
+            }
+          }
+        }
+        for (const entry2 of middlewareEntries) {
+          const middleware = typeof entry2 === "string" ? nuxtApp._middleware.named[entry2] || await namedMiddleware[entry2]?.().then((r) => r.default || r) : entry2;
+          if (!middleware) {
+            throw new Error(`Unknown route middleware: '${entry2}'.`);
+          }
+          try {
+            const result = await nuxtApp.runWithContext(() => middleware(to, from));
+            if (true) {
+              if (result === false || result instanceof Error) {
+                const error2 = result || createError({
+                  statusCode: 404,
+                  statusMessage: `Page Not Found: ${initialURL}`
+                });
+                await nuxtApp.runWithContext(() => showError(error2));
+                return false;
+              }
+            }
+            if (result === true) {
+              continue;
+            }
+            if (result === false) {
+              return result;
+            }
+            if (result) {
+              if (isNuxtError(result) && result.fatal) {
+                await nuxtApp.runWithContext(() => showError(result));
+              }
+              return result;
+            }
+          } catch (err) {
+            const error2 = createError(err);
+            if (error2.fatal) {
+              await nuxtApp.runWithContext(() => showError(error2));
+            }
+            return error2;
+          }
+        }
+      }
+    });
+    router.onError(async () => {
+      delete nuxtApp._processingMiddleware;
+      await nuxtApp.callHook("page:loading:end");
+    });
+    router.afterEach(async (to, _from) => {
+      if (to.matched.length === 0) {
+        await nuxtApp.runWithContext(() => showError(createError({
+          statusCode: 404,
+          fatal: false,
+          statusMessage: `Page not found: ${to.fullPath}`,
+          data: {
+            path: to.fullPath
+          }
+        })));
+      }
+    });
+    nuxtApp.hooks.hookOnce("app:created", async () => {
+      try {
+        if ("name" in resolvedInitialRoute) {
+          resolvedInitialRoute.name = void 0;
+        }
+        await router.replace({
+          ...resolvedInitialRoute,
+          force: true
+        });
+        router.options.scrollBehavior = routerOptions.scrollBehavior;
+      } catch (error2) {
+        await nuxtApp.runWithContext(() => showError(error2));
+      }
+    });
+    return { provide: { router } };
+  }
+});
+const reducers = [
+  ["NuxtError", (data) => isNuxtError(data) && data.toJSON()],
+  ["EmptyShallowRef", (data) => isRef(data) && isShallow(data) && !data.value && (typeof data.value === "bigint" ? "0n" : JSON.stringify(data.value) || "_")],
+  ["EmptyRef", (data) => isRef(data) && !data.value && (typeof data.value === "bigint" ? "0n" : JSON.stringify(data.value) || "_")],
+  ["ShallowRef", (data) => isRef(data) && isShallow(data) && data.value],
+  ["ShallowReactive", (data) => isReactive(data) && isShallow(data) && toRaw(data)],
+  ["Ref", (data) => isRef(data) && data.value],
+  ["Reactive", (data) => isReactive(data) && toRaw(data)]
+];
+const revive_payload_server_MVtmlZaQpj6ApFmshWfUWl5PehCebzaBf2NuRMiIbms = /* @__PURE__ */ defineNuxtPlugin({
+  name: "nuxt:revive-payload:server",
+  setup() {
+    for (const [reducer, fn] of reducers) {
+      definePayloadReducer(reducer, fn);
+    }
+  }
+});
 const plugin = /* @__PURE__ */ defineNuxtPlugin({
   name: "pinia",
   setup(nuxtApp) {
@@ -1461,7 +1782,7 @@ const plugin = /* @__PURE__ */ defineNuxtPlugin({
     };
   }
 });
-const LazyIcon = defineAsyncComponent(() => import('./index-qc4pVZLW.mjs').then((r) => r["default"] || r.default || r));
+const LazyIcon = defineAsyncComponent(() => import('./index-B_FHYaq5.mjs').then((r) => r["default"] || r.default || r));
 const lazyGlobalComponents = [
   ["Icon", LazyIcon]
 ];
@@ -1672,254 +1993,230 @@ function normalizeSlot(slot, data) {
   const slotContent = slot(data);
   return slotContent.length === 1 ? h(slotContent[0]) : h(Fragment, void 0, slotContent);
 }
-const _export_sfc = (sfc, props) => {
-  const target = sfc.__vccOpts || sfc;
-  for (const [key, val] of props) {
-    target[key] = val;
-  }
-  return target;
-};
-const _sfc_main$3 = {
-  __name: "GlassmorphismAuthModal",
+const _sfc_main$6 = /* @__PURE__ */ defineComponent({
+  __name: "StackAuthSocialButtons",
   __ssrInlineRender: true,
   props: {
-    isOpen: Boolean
+    mode: {}
   },
-  emits: ["close", "auth-success"],
+  setup(__props) {
+    const props = __props;
+    const ctaLabel = computed(() => props.mode === "register" ? "registrieren" : "anmelden");
+    return (_ctx, _push, _parent, _attrs) => {
+      _push(`<div${ssrRenderAttrs(mergeProps({ class: "space-y-3" }, _attrs))}><button type="button" class="flex w-full items-center justify-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-medium text-white transition hover:bg-white/10"><svg class="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true"><path fill="#EA4335" d="M12 11.8v4.8h6.7a6.8 6.8 0 0 1-2.9 4.5l4.7 3.6C23.3 21.9 24 19.2 24 16.8A12 12 0 0 0 12 4v7.8z"></path><path fill="#34A853" d="M12 24c3.2 0 5.8-1 7.7-2.7l-4.7-3.6c-.8.5-1.8.8-3 .8-2.3 0-4.2-1.5-4.9-3.5l-4.8 3.7C4 21.7 7.7 24 12 24z"></path><path fill="#4A90E2" d="M7.1 11.9a5 5 0 0 1 0-3.2L2.3 5A12 12 0 0 0 0 12a12 12 0 0 0 2.3 7l4.8-3.6a5 5 0 0 1 0-3.5z"></path><path fill="#FBBC05" d="M12 4.8a6.5 6.5 0 0 1 4.6 1.8l3.4-3.4A11.3 11.3 0 0 0 12 0C7.7 0 4 2.3 2.3 5.9l4.9 3.8C7.8 7.3 9.7 5 12 5z"></path></svg><span>Mit Google ${ssrInterpolate(ctaLabel.value)}</span></button></div>`);
+    };
+  }
+});
+const _sfc_setup$6 = _sfc_main$6.setup;
+_sfc_main$6.setup = (props, ctx) => {
+  const ssrContext = useSSRContext();
+  (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("components/auth/StackAuthSocialButtons.vue");
+  return _sfc_setup$6 ? _sfc_setup$6(props, ctx) : void 0;
+};
+const AuthSocialButtons = Object.assign(_sfc_main$6, { __name: "AuthStackAuthSocialButtons" });
+const _sfc_main$5 = /* @__PURE__ */ defineComponent({
+  __name: "StackAuthLoginForm",
+  __ssrInlineRender: true,
+  props: {
+    loading: { type: Boolean }
+  },
+  emits: ["submit"],
   setup(__props, { emit: __emit }) {
-    const isSignUp = ref(false);
-    const loading = ref(false);
-    const formData = reactive({
-      // Shared
-      name: "",
+    const props = __props;
+    const form = reactive({
       email: "",
       password: "",
-      confirmPassword: "",
-      rememberMe: false,
-      acceptTerms: false,
-      // Registration details
+      remember: true
+    });
+    const showPassword = ref(false);
+    const loading = computed(() => props.loading ?? false);
+    return (_ctx, _push, _parent, _attrs) => {
+      _push(`<form${ssrRenderAttrs(mergeProps({ class: "space-y-5" }, _attrs))}><div class="space-y-2"><label for="auth-email" class="text-sm font-medium text-white/80">E-Mail-Adresse *</label><input id="auth-email"${ssrRenderAttr("value", form.email)} type="email" autocomplete="email" class="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-white/40 focus:border-blue-300 focus:outline-none" placeholder="kanzlei@example.de" required></div><div class="space-y-2"><div class="flex items-center justify-between text-sm text-white/80"><label for="auth-password" class="font-medium">Passwort *</label><button type="button" class="text-xs text-blue-300 hover:text-blue-200">${ssrInterpolate(showPassword.value ? "Verbergen" : "Anzeigen")}</button></div><input id="auth-password"${ssrRenderDynamicModel(showPassword.value ? "text" : "password", form.password, null)}${ssrRenderAttr("type", showPassword.value ? "text" : "password")} autocomplete="current-password" class="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-white/40 focus:border-blue-300 focus:outline-none" placeholder="Mindestens 8 Zeichen" required></div><label class="flex items-center gap-2 text-sm text-white/70"><input${ssrIncludeBooleanAttr(Array.isArray(form.remember) ? ssrLooseContain(form.remember, null) : form.remember) ? " checked" : ""} type="checkbox" class="h-4 w-4 rounded border-white/20 bg-transparent"><span>Angemeldet bleiben</span></label><button type="submit" class="flex w-full items-center justify-center gap-2 rounded-2xl bg-blue-400/90 px-4 py-3 text-sm font-semibold text-slate-900 transition hover:bg-blue-300 disabled:cursor-not-allowed disabled:opacity-60"${ssrIncludeBooleanAttr(loading.value) ? " disabled" : ""}>`);
+      if (loading.value) {
+        _push(`<svg class="h-4 w-4 animate-spin text-slate-900" viewBox="0 0 24 24" aria-hidden="true"><circle class="opacity-20" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-80" fill="currentColor" d="M4 12a8 8 0 0 1 8-8v4l3.5-3.5A12 12 0 0 0 4 12z"></path></svg>`);
+      } else {
+        _push(`<!---->`);
+      }
+      _push(`<span>${ssrInterpolate(loading.value ? "Wird geprüft…" : "Jetzt anmelden")}</span></button></form>`);
+    };
+  }
+});
+const _sfc_setup$5 = _sfc_main$5.setup;
+_sfc_main$5.setup = (props, ctx) => {
+  const ssrContext = useSSRContext();
+  (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("components/auth/StackAuthLoginForm.vue");
+  return _sfc_setup$5 ? _sfc_setup$5(props, ctx) : void 0;
+};
+const AuthLoginForm = Object.assign(_sfc_main$5, { __name: "AuthStackAuthLoginForm" });
+const _sfc_main$4 = /* @__PURE__ */ defineComponent({
+  __name: "StackAuthRegisterForm",
+  __ssrInlineRender: true,
+  props: {
+    loading: { type: Boolean }
+  },
+  emits: ["submit"],
+  setup(__props, { emit: __emit }) {
+    const props = __props;
+    const form = reactive({
       firstName: "",
       lastName: "",
-      phone: "",
-      company: "",
-      addressLine1: "",
-      addressLine2: "",
-      city: "",
-      postalCode: "",
-      country: ""
-    });
-    const errors = reactive({
-      name: "",
+      title: "",
+      firmName: "",
       email: "",
       password: "",
       confirmPassword: "",
-      terms: "",
-      phone: "",
-      company: "",
-      addressLine1: "",
-      city: "",
-      postalCode: "",
-      country: ""
+      terms: false
     });
+    const errors = reactive({
+      password: "",
+      terms: ""
+    });
+    const loading = computed(() => props.loading ?? false);
     return (_ctx, _push, _parent, _attrs) => {
       const _component_NuxtLink = __nuxt_component_0$1;
+      _push(`<form${ssrRenderAttrs(mergeProps({ class: "space-y-5" }, _attrs))}><div class="grid grid-cols-1 gap-4 sm:grid-cols-2"><div class="space-y-2"><label for="signup-first-name" class="text-sm font-medium text-white/80">Vorname *</label><input id="signup-first-name"${ssrRenderAttr("value", form.firstName)} type="text" autocomplete="given-name" class="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-white/40 focus:border-blue-300 focus:outline-none" placeholder="Max" required></div><div class="space-y-2"><label for="signup-last-name" class="text-sm font-medium text-white/80">Nachname *</label><input id="signup-last-name"${ssrRenderAttr("value", form.lastName)} type="text" autocomplete="family-name" class="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-white/40 focus:border-blue-300 focus:outline-none" placeholder="Müller" required></div></div><div class="grid grid-cols-1 gap-4 sm:grid-cols-2"><div class="space-y-2"><label for="signup-title" class="text-sm font-medium text-white/80">Titel / Position *</label><input id="signup-title"${ssrRenderAttr("value", form.title)} type="text" class="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-white/40 focus:border-blue-300 focus:outline-none" placeholder="Partner, RA" required></div><div class="space-y-2"><label for="signup-firm" class="text-sm font-medium text-white/80">Kanzleiname *</label><input id="signup-firm"${ssrRenderAttr("value", form.firmName)} type="text" class="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-white/40 focus:border-blue-300 focus:outline-none" placeholder="Müller &amp; Partner" required></div></div><div class="space-y-2"><label for="signup-email" class="text-sm font-medium text-white/80">Geschäftliche E-Mail *</label><input id="signup-email"${ssrRenderAttr("value", form.email)} type="email" autocomplete="email" class="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-white/40 focus:border-blue-300 focus:outline-none" placeholder="kanzlei@example.de" required></div><div class="grid grid-cols-1 gap-4 sm:grid-cols-2"><div class="space-y-2"><label for="signup-password" class="text-sm font-medium text-white/80">Passwort *</label><input id="signup-password"${ssrRenderAttr("value", form.password)} type="password" autocomplete="new-password" minlength="8" class="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-white/40 focus:border-blue-300 focus:outline-none" placeholder="Mindestens 8 Zeichen" required></div><div class="space-y-2"><label for="signup-confirm" class="text-sm font-medium text-white/80">Passwort bestätigen *</label><input id="signup-confirm"${ssrRenderAttr("value", form.confirmPassword)} type="password" autocomplete="new-password" class="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder-white/40 focus:border-blue-300 focus:outline-none" placeholder="Passwort erneut eingeben" required></div></div>`);
+      if (errors.password) {
+        _push(`<p class="text-xs text-red-200">${ssrInterpolate(errors.password)}</p>`);
+      } else {
+        _push(`<!---->`);
+      }
+      _push(`<label class="flex items-start gap-2 text-sm text-white/70"><input${ssrIncludeBooleanAttr(Array.isArray(form.terms) ? ssrLooseContain(form.terms, null) : form.terms) ? " checked" : ""} type="checkbox" class="mt-1 h-4 w-4 rounded border-white/20 bg-transparent"><span> Ich akzeptiere die `);
+      _push(ssrRenderComponent(_component_NuxtLink, {
+        to: "/terms",
+        class: "text-blue-300 hover:text-blue-200",
+        target: "_blank"
+      }, {
+        default: withCtx((_, _push2, _parent2, _scopeId) => {
+          if (_push2) {
+            _push2(`AGB`);
+          } else {
+            return [
+              createTextVNode("AGB")
+            ];
+          }
+        }),
+        _: 1
+      }, _parent));
+      _push(` und die `);
+      _push(ssrRenderComponent(_component_NuxtLink, {
+        to: "/privacy",
+        class: "text-blue-300 hover:text-blue-200",
+        target: "_blank"
+      }, {
+        default: withCtx((_, _push2, _parent2, _scopeId) => {
+          if (_push2) {
+            _push2(`Datenschutzerklärung`);
+          } else {
+            return [
+              createTextVNode("Datenschutzerklärung")
+            ];
+          }
+        }),
+        _: 1
+      }, _parent));
+      _push(`. </span></label>`);
+      if (errors.terms) {
+        _push(`<p class="text-xs text-red-200">${ssrInterpolate(errors.terms)}</p>`);
+      } else {
+        _push(`<!---->`);
+      }
+      _push(`<button type="submit" class="flex w-full items-center justify-center gap-2 rounded-2xl bg-blue-400/90 px-4 py-3 text-sm font-semibold text-slate-900 transition hover:bg-blue-300 disabled:cursor-not-allowed disabled:opacity-60"${ssrIncludeBooleanAttr(loading.value) ? " disabled" : ""}>`);
+      if (loading.value) {
+        _push(`<svg class="h-4 w-4 animate-spin text-slate-900" viewBox="0 0 24 24" aria-hidden="true"><circle class="opacity-20" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-80" fill="currentColor" d="M4 12a8 8 0 0 1 8-8v4l3.5-3.5A12 12 0 0 0 4 12z"></path></svg>`);
+      } else {
+        _push(`<!---->`);
+      }
+      _push(`<span>${ssrInterpolate(loading.value ? "Wird erstellt…" : "Kostenlos registrieren")}</span></button></form>`);
+    };
+  }
+});
+const _sfc_setup$4 = _sfc_main$4.setup;
+_sfc_main$4.setup = (props, ctx) => {
+  const ssrContext = useSSRContext();
+  (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("components/auth/StackAuthRegisterForm.vue");
+  return _sfc_setup$4 ? _sfc_setup$4(props, ctx) : void 0;
+};
+const AuthRegisterForm = Object.assign(_sfc_main$4, { __name: "AuthStackAuthRegisterForm" });
+const _sfc_main$3 = /* @__PURE__ */ defineComponent({
+  __name: "StackAuthModal",
+  __ssrInlineRender: true,
+  setup(__props) {
+    const authStore = useAuthStore();
+    const { showAuthModal: isOpen, authModalView: view, isSubmitting, authError: error } = storeToRefs(authStore);
+    const tabs = [
+      { label: "Anmelden", value: "login" },
+      { label: "Registrieren", value: "register" }
+    ];
+    const currentForm = computed(() => view.value === "login" ? AuthLoginForm : AuthRegisterForm);
+    async function handleSubmit(payload) {
+      try {
+        if (view.value === "login") {
+          await authStore.login(payload);
+        } else {
+          await authStore.register(payload);
+        }
+      } catch (error2) {
+        console.warn("Auth submission failed", error2);
+      }
+    }
+    function loginWithGoogle() {
+      authStore.loginWithGoogle();
+    }
+    return (_ctx, _push, _parent, _attrs) => {
       ssrRenderTeleport(_push, (_push2) => {
-        if (__props.isOpen) {
-          _push2(`<div class="auth-modal-overlay" aria-hidden="false" role="dialog" data-v-087a3215><div class="auth-modal" data-v-087a3215><div class="auth-modal-header" data-v-087a3215><h2 class="auth-modal-title" data-v-087a3215>${ssrInterpolate(isSignUp.value ? "Registrieren" : "Anmelden")}</h2><button class="auth-modal-close" data-v-087a3215>×</button></div><div class="auth-content" data-v-087a3215><div class="social-login-section" data-v-087a3215><button class="social-button google" data-v-087a3215><svg width="20" height="20" viewBox="0 0 24 24" data-v-087a3215><path fill="#4285f4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" data-v-087a3215></path><path fill="#34a853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" data-v-087a3215></path><path fill="#fbbc05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" data-v-087a3215></path><path fill="#ea4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" data-v-087a3215></path></svg> Mit Google ${ssrInterpolate(isSignUp.value ? "registrieren" : "anmelden")}</button></div><div class="auth-divider" data-v-087a3215><span data-v-087a3215>oder mit E-Mail</span></div><form id="authForm" class="auth-form" data-v-087a3215>`);
-          if (isSignUp.value) {
-            _push2(`<div class="auth-grid-2" data-v-087a3215><div class="auth-form-group" data-v-087a3215><label class="auth-form-label" for="authFirstName" data-v-087a3215>Vorname</label><input${ssrRenderAttr("value", formData.firstName)} type="text" id="authFirstName" class="auth-form-input" placeholder="Max" data-v-087a3215></div><div class="auth-form-group" data-v-087a3215><label class="auth-form-label" for="authLastName" data-v-087a3215>Nachname</label><input${ssrRenderAttr("value", formData.lastName)} type="text" id="authLastName" class="auth-form-input" placeholder="Müller" data-v-087a3215></div></div>`);
+        if (unref(isOpen)) {
+          _push2(`<div class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-sm px-4" tabindex="-1"><div class="w-full max-w-lg overflow-hidden rounded-3xl bg-slate-900 text-white shadow-2xl"><header class="flex items-center justify-between border-b border-white/10 px-8 py-6"><div><p class="text-xs uppercase tracking-[0.28em] text-blue-300">ANWALTS.AI</p><h2 class="mt-1 text-2xl font-semibold">${ssrInterpolate(unref(view) === "login" ? "Willkommen zurück" : "Konto erstellen")}</h2></div><button type="button" class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20" aria-label="Modal schließen"><span class="text-lg leading-none">×</span></button></header><div class="border-b border-white/10 bg-slate-900/80 px-8 pt-5"><nav class="flex gap-3 text-sm font-medium"><!--[-->`);
+          ssrRenderList(tabs, (tab) => {
+            _push2(`<button type="button" class="${ssrRenderClass([
+              "rounded-full px-4 py-2 transition focus:outline-none",
+              unref(view) === tab.value ? "bg-white text-slate-900 shadow" : "text-white/60 hover:text-white"
+            ])}">${ssrInterpolate(tab.label)}</button>`);
+          });
+          _push2(`<!--]--></nav></div><section class="space-y-6 px-8 py-7">`);
+          _push2(ssrRenderComponent(AuthSocialButtons, {
+            mode: unref(view),
+            onGoogle: loginWithGoogle
+          }, null, _parent));
+          _push2(`<div class="flex items-center gap-3 text-xs uppercase tracking-[0.18em] text-white/40"><span class="h-px w-full bg-white/10" aria-hidden="true"></span><span>E-Mail Zugang</span><span class="h-px w-full bg-white/10" aria-hidden="true"></span></div>`);
+          if (unref(error)) {
+            _push2(`<p class="rounded-2xl border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm text-red-200">${ssrInterpolate(unref(error))}</p>`);
           } else {
             _push2(`<!---->`);
           }
-          if (isSignUp.value) {
-            _push2(`<div class="auth-form-group" data-v-087a3215><label class="auth-form-label" for="authFullName" data-v-087a3215>Vollständiger Name</label><input${ssrRenderAttr("value", formData.name)} type="text" id="authFullName" class="auth-form-input" placeholder="Dr. Max Müller" data-v-087a3215>`);
-            if (errors.name) {
-              _push2(`<div class="auth-error" data-v-087a3215>${ssrInterpolate(errors.name)}</div>`);
-            } else {
-              _push2(`<!---->`);
-            }
-            _push2(`</div>`);
+          ssrRenderVNode(_push2, createVNode(resolveDynamicComponent(currentForm.value), {
+            loading: unref(isSubmitting),
+            onSubmit: handleSubmit
+          }, null), _parent);
+          _push2(`</section><footer class="border-t border-white/10 bg-slate-900/70 px-8 py-5 text-sm text-white/70">`);
+          if (unref(view) === "login") {
+            _push2(`<!--[--> Noch kein Konto? <button type="button" class="ml-1 font-semibold text-blue-300 hover:text-blue-200"> Registrieren </button><!--]-->`);
           } else {
-            _push2(`<!---->`);
+            _push2(`<!--[--> Bereits registriert? <button type="button" class="ml-1 font-semibold text-blue-300 hover:text-blue-200"> Jetzt anmelden </button><!--]-->`);
           }
-          _push2(`<div class="auth-form-group" data-v-087a3215><label class="auth-form-label" for="authEmail" data-v-087a3215>E-Mail-Adresse</label><input${ssrRenderAttr("value", formData.email)} type="email" id="authEmail" class="auth-form-input" placeholder="ihre@email.com" required data-v-087a3215>`);
-          if (errors.email) {
-            _push2(`<div class="auth-error" data-v-087a3215>${ssrInterpolate(errors.email)}</div>`);
-          } else {
-            _push2(`<!---->`);
-          }
-          _push2(`</div><div class="auth-form-group" data-v-087a3215><label class="auth-form-label" for="authPassword" data-v-087a3215>Passwort</label><input${ssrRenderAttr("value", formData.password)} type="password" id="authPassword" class="auth-form-input" placeholder="Ihr Passwort" required data-v-087a3215>`);
-          if (errors.password) {
-            _push2(`<div class="auth-error" data-v-087a3215>${ssrInterpolate(errors.password)}</div>`);
-          } else {
-            _push2(`<!---->`);
-          }
-          _push2(`</div>`);
-          if (isSignUp.value) {
-            _push2(`<div class="auth-form-group" data-v-087a3215><label class="auth-form-label" for="authConfirmPassword" data-v-087a3215>Passwort bestätigen</label><input${ssrRenderAttr("value", formData.confirmPassword)} type="password" id="authConfirmPassword" class="auth-form-input" placeholder="Passwort bestätigen" data-v-087a3215>`);
-            if (errors.confirmPassword) {
-              _push2(`<div class="auth-error" data-v-087a3215>${ssrInterpolate(errors.confirmPassword)}</div>`);
-            } else {
-              _push2(`<!---->`);
-            }
-            _push2(`</div>`);
-          } else {
-            _push2(`<!---->`);
-          }
-          if (isSignUp.value) {
-            _push2(`<div class="auth-grid-2" data-v-087a3215><div class="auth-form-group" data-v-087a3215><label class="auth-form-label" for="authPhone" data-v-087a3215>Telefon</label><input${ssrRenderAttr("value", formData.phone)} type="tel" id="authPhone" class="auth-form-input" placeholder="+49 170 1234567" data-v-087a3215>`);
-            if (errors.phone) {
-              _push2(`<div class="auth-error" data-v-087a3215>${ssrInterpolate(errors.phone)}</div>`);
-            } else {
-              _push2(`<!---->`);
-            }
-            _push2(`</div><div class="auth-form-group" data-v-087a3215><label class="auth-form-label" for="authCompany" data-v-087a3215>Kanzlei/Firma</label><input${ssrRenderAttr("value", formData.company)} type="text" id="authCompany" class="auth-form-input" placeholder="ANWALTS.AI GmbH" data-v-087a3215></div></div>`);
-          } else {
-            _push2(`<!---->`);
-          }
-          if (isSignUp.value) {
-            _push2(`<div class="auth-form-group" data-v-087a3215><label class="auth-form-label" for="authAddress1" data-v-087a3215>Adresse</label><input${ssrRenderAttr("value", formData.addressLine1)} type="text" id="authAddress1" class="auth-form-input" placeholder="Musterstraße 1" data-v-087a3215>`);
-            if (errors.addressLine1) {
-              _push2(`<div class="auth-error" data-v-087a3215>${ssrInterpolate(errors.addressLine1)}</div>`);
-            } else {
-              _push2(`<!---->`);
-            }
-            _push2(`</div>`);
-          } else {
-            _push2(`<!---->`);
-          }
-          if (isSignUp.value) {
-            _push2(`<div class="auth-form-group" data-v-087a3215><input${ssrRenderAttr("value", formData.addressLine2)} type="text" class="auth-form-input" placeholder="Adresszusatz (optional)" data-v-087a3215></div>`);
-          } else {
-            _push2(`<!---->`);
-          }
-          if (isSignUp.value) {
-            _push2(`<div class="auth-grid-2" data-v-087a3215><div class="auth-form-group" data-v-087a3215><label class="auth-form-label" for="authCity" data-v-087a3215>Stadt</label><input${ssrRenderAttr("value", formData.city)} type="text" id="authCity" class="auth-form-input" placeholder="Berlin" data-v-087a3215>`);
-            if (errors.city) {
-              _push2(`<div class="auth-error" data-v-087a3215>${ssrInterpolate(errors.city)}</div>`);
-            } else {
-              _push2(`<!---->`);
-            }
-            _push2(`</div><div class="auth-form-group" data-v-087a3215><label class="auth-form-label" for="authPostal" data-v-087a3215>PLZ</label><input${ssrRenderAttr("value", formData.postalCode)} type="text" id="authPostal" class="auth-form-input" placeholder="10115" data-v-087a3215>`);
-            if (errors.postalCode) {
-              _push2(`<div class="auth-error" data-v-087a3215>${ssrInterpolate(errors.postalCode)}</div>`);
-            } else {
-              _push2(`<!---->`);
-            }
-            _push2(`</div></div>`);
-          } else {
-            _push2(`<!---->`);
-          }
-          if (isSignUp.value) {
-            _push2(`<div class="auth-form-group" data-v-087a3215><label class="auth-form-label" for="authCountry" data-v-087a3215>Land</label><input${ssrRenderAttr("value", formData.country)} type="text" id="authCountry" class="auth-form-input" placeholder="Deutschland" data-v-087a3215>`);
-            if (errors.country) {
-              _push2(`<div class="auth-error" data-v-087a3215>${ssrInterpolate(errors.country)}</div>`);
-            } else {
-              _push2(`<!---->`);
-            }
-            _push2(`</div>`);
-          } else {
-            _push2(`<!---->`);
-          }
-          if (!isSignUp.value) {
-            _push2(`<div class="auth-form-options" data-v-087a3215><label class="auth-checkbox-group" data-v-087a3215><input${ssrIncludeBooleanAttr(Array.isArray(formData.rememberMe) ? ssrLooseContain(formData.rememberMe, null) : formData.rememberMe) ? " checked" : ""} type="checkbox" class="auth-checkbox" data-v-087a3215><span data-v-087a3215>Angemeldet bleiben</span></label><a href="#" class="auth-link" data-v-087a3215>Passwort vergessen?</a></div>`);
-          } else {
-            _push2(`<!---->`);
-          }
-          _push2(`<div class="auth-actions" data-v-087a3215>`);
-          if (isSignUp.value) {
-            _push2(`<div class="auth-consent-row" data-v-087a3215><label class="auth-checkbox-group auth-consent-checkbox" data-v-087a3215><input${ssrIncludeBooleanAttr(Array.isArray(formData.acceptTerms) ? ssrLooseContain(formData.acceptTerms, null) : formData.acceptTerms) ? " checked" : ""} type="checkbox" class="auth-checkbox" required data-v-087a3215><span data-v-087a3215>Ich akzeptiere</span></label>`);
-            _push2(ssrRenderComponent(_component_NuxtLink, {
-              to: "/terms",
-              class: "auth-link"
-            }, {
-              default: withCtx((_, _push3, _parent2, _scopeId) => {
-                if (_push3) {
-                  _push3(`AGB`);
-                } else {
-                  return [
-                    createTextVNode("AGB")
-                  ];
-                }
-              }),
-              _: 1
-            }, _parent));
-            _push2(`<span data-v-087a3215>und</span>`);
-            _push2(ssrRenderComponent(_component_NuxtLink, {
-              to: "/privacy",
-              class: "auth-link"
-            }, {
-              default: withCtx((_, _push3, _parent2, _scopeId) => {
-                if (_push3) {
-                  _push3(`Datenschutz`);
-                } else {
-                  return [
-                    createTextVNode("Datenschutz")
-                  ];
-                }
-              }),
-              _: 1
-            }, _parent));
-            _push2(`</div>`);
-          } else {
-            _push2(`<!---->`);
-          }
-          if (errors.terms && isSignUp.value) {
-            _push2(`<div class="auth-error" data-v-087a3215>${ssrInterpolate(errors.terms)}</div>`);
-          } else {
-            _push2(`<!---->`);
-          }
-          _push2(`<button type="submit" class="auth-submit-button cta-with-lights"${ssrIncludeBooleanAttr(loading.value) ? " disabled" : ""} data-v-087a3215>`);
-          if (!loading.value) {
-            _push2(`<span data-v-087a3215>${ssrInterpolate(isSignUp.value ? "Registrieren" : "Anmelden")}</span>`);
-          } else {
-            _push2(`<div class="auth-loading" data-v-087a3215></div>`);
-          }
-          _push2(`</button><div class="auth-form-toggle auth-form-toggle-bottom" data-v-087a3215><span data-v-087a3215>${ssrInterpolate(isSignUp.value ? "Bereits ein Konto?" : "Noch kein Konto?")}</span><button type="button" data-v-087a3215>${ssrInterpolate(isSignUp.value ? "Jetzt anmelden" : "Jetzt registrieren")}</button></div></div></form></div></div></div>`);
+          _push2(`</footer></div></div>`);
         } else {
           _push2(`<!---->`);
         }
       }, "body", false, _parent);
     };
   }
-};
+});
 const _sfc_setup$3 = _sfc_main$3.setup;
 _sfc_main$3.setup = (props, ctx) => {
   const ssrContext = useSSRContext();
-  (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("components/GlassmorphismAuthModal.vue");
+  (ssrContext.modules || (ssrContext.modules = /* @__PURE__ */ new Set())).add("components/auth/StackAuthModal.vue");
   return _sfc_setup$3 ? _sfc_setup$3(props, ctx) : void 0;
 };
-const __nuxt_component_1 = /* @__PURE__ */ Object.assign(_export_sfc(_sfc_main$3, [["__scopeId", "data-v-087a3215"]]), { __name: "GlassmorphismAuthModal" });
-const isOpen = ref(false);
-function useAuthModal() {
-  function open() {
-    isOpen.value = true;
-  }
-  function close() {
-    isOpen.value = false;
-  }
-  return { isOpen, open, close };
-}
+const StackAuthModal = Object.assign(_sfc_main$3, { __name: "AuthStackAuthModal" });
 const _sfc_main$2 = {
   __name: "app",
   __ssrInlineRender: true,
   setup(__props) {
-    const auth = useAuthModal();
-    const isModalOpen = computed(() => auth.isOpen.value);
-    function onAuthSuccess(data) {
-      auth.close();
-      navigateTo("/dashboard");
-    }
     return (_ctx, _push, _parent, _attrs) => {
       const _component_NuxtPage = __nuxt_component_0;
-      const _component_GlassmorphismAuthModal = __nuxt_component_1;
       _push(`<div${ssrRenderAttrs(_attrs)}>`);
       _push(ssrRenderComponent(_component_NuxtPage, null, null, _parent));
-      _push(ssrRenderComponent(_component_GlassmorphismAuthModal, {
-        "is-open": isModalOpen.value,
-        onClose: ($event) => unref(auth).close(),
-        onAuthSuccess
-      }, null, _parent));
+      _push(ssrRenderComponent(StackAuthModal, null, null, _parent));
       _push(`</div>`);
     };
   }
@@ -1951,8 +2248,8 @@ const _sfc_main$1 = {
     const statusMessage = _error.statusMessage ?? (is404 ? "Page Not Found" : "Internal Server Error");
     const description = _error.message || _error.toString();
     const stack = void 0;
-    const _Error404 = defineAsyncComponent(() => import('./error-404-ClbJJLF1.mjs'));
-    const _Error = defineAsyncComponent(() => import('./error-500-BSUT4Zfg.mjs'));
+    const _Error404 = defineAsyncComponent(() => import('./error-404-C_Fry4Po.mjs'));
+    const _Error = defineAsyncComponent(() => import('./error-500-CgeQl0_t.mjs'));
     const ErrorTemplate = is404 ? _Error404 : _Error;
     return (_ctx, _push, _parent, _attrs) => {
       _push(ssrRenderComponent(unref(ErrorTemplate), mergeProps({ statusCode: unref(statusCode), statusMessage: unref(statusMessage), description: unref(description), stack: unref(stack) }, _attrs), null, _parent));
@@ -2033,5 +2330,5 @@ let entry;
 }
 const entry$1 = (ssrContext) => entry(ssrContext);
 
-export { _export_sfc as _, __nuxt_component_0$1 as a, useNuxtApp as b, asyncDataDefaults as c, defineNuxtRouteMiddleware as d, entry$1 as default, createError as e, useAppConfig as f, useRuntimeConfig as g, navigateTo as n, useHead as u };
+export { __nuxt_component_0$1 as _, useAuthStore as a, useRuntimeConfig as b, useRouter as c, defineNuxtRouteMiddleware as d, entry$1 as default, useRequestHeaders as e, useNuxtApp as f, asyncDataDefaults as g, createError as h, useAppConfig as i, navigateTo as n, useHead as u };
 //# sourceMappingURL=server.mjs.map

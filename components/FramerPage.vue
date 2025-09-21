@@ -96,6 +96,58 @@ function fixVisibility(doc) {
   } catch {}
 }
 
+function bridgeAuthHandlers(doc) {
+  try {
+    const frameWindow = doc.defaultView
+    if (!frameWindow) return
+
+    const forwardToParent = (mode = 'login') => {
+      if (window.parent) {
+        try {
+          window.parent.postMessage({ type: 'openSignInModal', mode, from: 'framer-iframe' }, '*')
+        } catch {}
+
+        if (mode === 'register' && typeof window.parent.openRegisterModal === 'function') {
+          window.parent.openRegisterModal()
+        } else if (typeof window.parent.openAuthModal === 'function') {
+          window.parent.openAuthModal()
+        }
+      }
+    }
+
+    frameWindow.openAuthModal = () => forwardToParent('login')
+    frameWindow.openRegisterModal = () => forwardToParent('register')
+    frameWindow.toggleAuthMode = () => forwardToParent('register')
+
+    const legacyForm = doc.getElementById('authForm')
+    if (legacyForm) {
+      legacyForm.addEventListener('submit', (event) => {
+        event?.preventDefault?.()
+        const legacyMode = frameWindow?.isRegistrationMode ? 'register' : 'login'
+        forwardToParent(legacyMode)
+      }, { capture: true })
+    }
+
+    const legacyModal = doc.getElementById('authModal')
+    if (legacyModal) {
+      legacyModal.style.display = 'none'
+      legacyModal.setAttribute('aria-hidden', 'true')
+    }
+
+    const legacyToggle = doc.getElementById('toggleButton')
+    if (legacyToggle) {
+      legacyToggle.addEventListener('click', (event) => {
+        event?.preventDefault?.()
+        forwardToParent('register')
+      }, { capture: true })
+    }
+
+    console.log('🔗 bridged legacy auth modal to parent handler')
+  } catch (error) {
+    console.warn('Failed bridging auth handlers', error)
+  }
+}
+
 function onFrameLoad() {
   try {
     const iframe = framerFrame.value
@@ -105,6 +157,7 @@ function onFrameLoad() {
     console.log('🔧 Framer iframe loaded - fixing button visibility')
     fixVisibility(doc)
     bindCtas(doc)
+    bridgeAuthHandlers(doc)
     // Rebind when DOM changes inside iframe
     try {
       new MutationObserver(() => bindCtas(doc)).observe(doc.documentElement, { childList: true, subtree: true })

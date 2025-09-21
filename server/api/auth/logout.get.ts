@@ -1,10 +1,36 @@
+import { buildBackendUrl } from '~/server/utils/backend'
+
 export default defineEventHandler(async (event) => {
   try {
-    const host = getHeader(event, 'host') || ''
-    const isLocal = host.includes('localhost') || host.includes('127.0.0.1')
-    const common = { secure: !isLocal, sameSite: 'none' as const, path: '/' }
-    try { setCookie(event, 'auth_token', '', { ...common, httpOnly: true, maxAge: 0 }) } catch {}
-    try { setCookie(event, 'user_data', '', { ...common, httpOnly: false, maxAge: 0 }) } catch {}
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    }
+    const cookies = getHeader(event, 'cookie')
+    if (cookies) headers.Cookie = cookies
+
+    const backendUrl = buildBackendUrl(event, '/api/auth/logout')
+
+    await fetch(backendUrl, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({ csrf_token: 'stub-csrf-token' }),
+    })
+  } catch (err) {
+    console.warn('Logout GET proxy failed', err)
+  }
+
+  const host = getHeader(event, 'host') || ''
+  const isLocal = host.includes('localhost') || host.includes('127.0.0.1')
+  try {
+    setCookie(event, 'user_data', '', {
+      path: '/',
+      httpOnly: false,
+      secure: !isLocal,
+      sameSite: !isLocal ? 'none' : 'lax',
+      maxAge: 0,
+    })
   } catch {}
+
   return sendRedirect(event, '/', 302)
 })

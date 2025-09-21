@@ -22,6 +22,7 @@
     "consola": "3.4.2",
     "debug": "4.4.1",
     "devalue": "5.1.1",
+    "dompurify": "3.2.7",
     "entities": "4.5.0",
     "estree-walker": "2.0.2",
     "hookable": "5.5.3",
