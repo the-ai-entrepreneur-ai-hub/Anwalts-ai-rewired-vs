@@ -1,4 +1,4 @@
-import { d as defineEventHandler, a as getQuery, e as getCookie, s as sendRedirect } from '../nitro/nitro.mjs';
+import { d as defineEventHandler, a as getQuery, f as getCookie, s as sendRedirect } from '../nitro/nitro.mjs';
 import 'node:http';
 import 'node:https';
 import 'node:events';

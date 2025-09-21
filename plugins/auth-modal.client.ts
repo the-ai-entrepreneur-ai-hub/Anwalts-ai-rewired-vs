@@ -1,13 +1,14 @@
-import { useAuthModal } from "~/composables/useAuthModal";
+import { useAuthStore } from "~/stores/auth";
 
 export default defineNuxtPlugin(() => {
   if (process.client) {
-    const auth = useAuthModal();
+    const store = useAuthStore();
 
     // Expose a global opener for iframe/buttons
     // Usage: window.openAuthModal()
-    (window as any).openAuthModal = () => auth.open();
-    (window as any).openSignInModal = () => auth.open(); // alias
+    (window as any).openAuthModal = () => store.open('login');
+    (window as any).openSignInModal = () => store.open('login'); // alias
+    (window as any).openRegisterModal = () => store.open('register');
 
     // Back-compat and robust postMessage bridge
     window.addEventListener("message", (event: MessageEvent) => {
@@ -26,10 +27,17 @@ export default defineNuxtPlugin(() => {
         } catch {}
 
         if (isTrustedOrigin && (msg === "openSignInModal" || msg === "openAuthModal")) {
-          auth.open();
+          store.open('login');
         }
       } catch {}
     });
+
+    // Auto-open modal when auth=required appears in URL
+    try {
+      const url = new URL(window.location.href)
+      if (url.searchParams.get('auth') === 'required') {
+        setTimeout(() => store.open('login'), 0)
+      }
+    } catch {}
   }
 });
-

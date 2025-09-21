@@ -22,7 +22,8 @@ export default defineNuxtConfig({
     '@pinia/nuxt'
   ],
   runtimeConfig: {
-    backendBase: process.env.BACKEND_BASE || 'http://172.19.0.4:8000',
+    // Default to the colocated FastAPI backend; override BACKEND_BASE if the service runs elsewhere.
+    backendBase: process.env.BACKEND_BASE || 'http://127.0.0.1:8000',
     GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
     GOOGLE_REDIRECT_URI: process.env.GOOGLE_REDIRECT_URI,
@@ -54,7 +55,10 @@ export default defineNuxtConfig({
       global: 'globalThis',
     },
     optimizeDeps: {
-      include: ['react', 'react-dom']
+      include: ['react', 'react-dom', 'unframer']
+    },
+    esbuild: {
+      jsx: 'automatic'
     },
     server: {
       host: '0.0.0.0',
@@ -67,7 +71,7 @@ export default defineNuxtConfig({
     port: 3000
   },
   build: {
-    transpile: ['unframer']
+    transpile: ['unframer', 'react', 'react-dom']
   },
   ssr: true,
   experimental: {

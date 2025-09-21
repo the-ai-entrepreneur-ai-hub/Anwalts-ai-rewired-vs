@@ -1,3 +1,5 @@
+import { buildBackendUrl } from '~/server/utils/backend'
+
 export default defineEventHandler(async (event) => {
   try {
     const formData = await readMultipartFormData(event)
@@ -19,9 +21,7 @@ export default defineEventHandler(async (event) => {
     const headers: any = { 'Content-Type': `multipart/form-data; boundary=${boundary}` }
     if (authToken) headers['Authorization'] = `Bearer ${authToken}`
 
-    const config = useRuntimeConfig()
-    const backendBase = (config as any).backendBase || process.env.BACKEND_BASE || 'http://172.19.0.4:8000'
-    const backendUrl = `${backendBase}/api/files/upload`
+    const backendUrl = buildBackendUrl(event, '/api/files/upload')
     const res = await fetch(backendUrl, { method: 'POST', headers, body: Buffer.concat(chunks) })
     const text = await res.text()
     setResponseStatus(event, res.status)

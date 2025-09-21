@@ -1,55 +1,40 @@
+import { buildBackendUrl } from '~/server/utils/backend'
+
 export default defineEventHandler(async (event) => {
-  try {
-    // Primary: accept Google session via user_data cookie set in google callback
-    const userDataCookie = getCookie(event, 'user_data')
-    if (userDataCookie) {
-      try {
-        const parsed = JSON.parse(userDataCookie)
-        if (parsed && parsed.email) {
-          return { success: true, user: parsed }
-        }
-      } catch (_) {
-        // fall through to legacy handling
-      }
-    }
+  const backendUrl = buildBackendUrl(event, '/api/auth/status')
 
-    // Email/password flow: accept real backend JWT in auth_token or validate against backend
-    const authToken = getCookie(event, 'auth_token')
-    if (authToken) {
-      const config = useRuntimeConfig()
-      const base = (config as any).backendBase || process.env.BACKEND_BASE || 'http://172.19.0.4:8000'
-      // Try to validate token against backend to fetch user profile
-      const backendCandidates = [
-        `${base}/auth/me`,
-        `${base}/auth/users/me`,
-        `${base}/api/auth/me`
-      ]
-      for (const url of backendCandidates) {
-        try {
-          const r = await fetch(url, {
-            headers: { 'Authorization': `Bearer ${authToken}`, 'Accept': 'application/json' }
-          })
-          if (r.ok) {
-            const u = await r.json().catch(() => ({}))
-            const user = u?.user || u || {}
-            if (user && (user.email || user.id || user.name)) {
-              return { success: true, user }
-            }
-          }
-        } catch (_) { /* try next */ }
-      }
-
-      // Fallback: treat presence of token as session (mirrors Google cookie gate)
-      return {
-        success: true,
-        user: { id: 'session', email: '', name: 'Benutzer', provider: 'email' }
-      }
-    }
-
-    // No cookies -> unauthenticated
-    throw createError({ statusCode: 401, statusMessage: 'Not authenticated' })
-    
-  } catch (error) {
-    throw error
+  const headers: Record<string, string> = {
+    Accept: 'application/json',
   }
+  const cookies = getHeader(event, 'cookie')
+  if (cookies) headers.Cookie = cookies
+
+  const backendResponse = await fetch(backendUrl, { headers }).catch((err) => {
+    console.error('Auth me proxy error', err)
+    throw createError({ statusCode: 502, statusMessage: 'Authentication service unavailable' })
+  })
+
+  const rawCookies = (backendResponse.headers as any).raw?.()['set-cookie'] || backendResponse.headers.get('set-cookie')
+  if (rawCookies) {
+    event.node.res.setHeader('set-cookie', Array.isArray(rawCookies) ? rawCookies : [rawCookies])
+  }
+
+  event.node.res.statusCode = backendResponse.status
+
+  const text = await backendResponse.text()
+  let result: any = {}
+  if (text) {
+    try {
+      result = JSON.parse(text)
+    } catch (err) {
+      console.warn('Auth me: failed to parse backend response', err)
+    }
+  }
+
+  if (!backendResponse.ok || result?.authenticated === false) {
+    const message = result?.error?.message || result?.message || 'Not authenticated'
+    throw createError({ statusCode: backendResponse.status || 401, statusMessage: message })
+  }
+
+  return { success: true, user: result?.user || null }
 })

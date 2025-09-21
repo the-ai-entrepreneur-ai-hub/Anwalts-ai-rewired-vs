@@ -1,3 +1,5 @@
+import { resolveBackendBase } from '~/server/utils/backend'
+
 export default defineEventHandler(async (event) => {
   try {
     const body = await readBody(event)
@@ -8,8 +10,7 @@ export default defineEventHandler(async (event) => {
       setResponseStatus(event, 400)
       return { error: 'Invalid path' }
     }
-    const config = useRuntimeConfig()
-    const backendBase = (config as any).backendBase || process.env.BACKEND_BASE || 'http://172.19.0.4:8000'
+    const backendBase = resolveBackendBase(event)
     const backendUrl = backendBase + path.replace(/^\/api\//, '/api/')
 
     const incomingAuth = getHeader(event, 'authorization')

@@ -1,5 +1,5 @@
 import { createRenderer, getRequestDependencies, getPreloadLinks, getPrefetchLinks } from 'vue-bundle-renderer/runtime';
-import { k as buildAssetsURL, u as useRuntimeConfig, l as getResponseStatusText, m as getResponseStatus, n as defineRenderHandler, p as publicAssetsURL, a as getQuery, c as createError, o as destr, q as getRouteRules, t as useNitroApp } from '../nitro/nitro.mjs';
+import { m as buildAssetsURL, u as useRuntimeConfig, n as getResponseStatusText, o as getResponseStatus, q as defineRenderHandler, t as publicAssetsURL, a as getQuery, c as createError, v as destr, w as getRouteRules, x as useNitroApp } from '../nitro/nitro.mjs';
 import { renderToString } from 'vue/server-renderer';
 import { createHead as createHead$1, propsToString, renderSSRHead } from 'unhead/server';
 import { stringify, uneval } from 'devalue';
@@ -71,7 +71,7 @@ function createHead(options = {}) {
   return head;
 }
 
-const appHead = {"meta":[{"name":"viewport","content":"width=device-width, initial-scale=1"},{"charset":"utf-8"}],"link":[{"rel":"icon","type":"image/png","href":"/favicon.png"},{"rel":"apple-touch-icon","href":"/favicon.png"},{"rel":"shortcut icon","href":"/favicon.png"}],"style":[],"script":[{"src":"https://cdn.tailwindcss.com"}],"noscript":[]};
+const appHead = {"meta":[{"name":"viewport","content":"width=device-width, initial-scale=1"},{"charset":"utf-8"}],"link":[{"rel":"icon","type":"image/png","href":"/favicon.png"},{"rel":"apple-touch-icon","href":"/favicon.png"},{"rel":"shortcut icon","href":"/favicon.png"}],"style":[],"script":[{"src":"https://cdn.tailwindcss.com"},{"src":"/shared/gbutton.js"}],"noscript":[]};
 
 const appRootTag = "div";
 

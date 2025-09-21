@@ -1,4 +1,4 @@
-import { d as defineEventHandler, e as getCookie, c as createError } from '../../../nitro/nitro.mjs';
+import { d as defineEventHandler, e as buildBackendUrl, g as getHeader, c as createError } from '../../../nitro/nitro.mjs';
 import 'node:http';
 import 'node:https';
 import 'node:events';
@@ -11,48 +11,36 @@ import '@iconify/utils';
 import 'consola';
 
 const me_get = defineEventHandler(async (event) => {
-  try {
-    const userDataCookie = getCookie(event, "user_data");
-    if (userDataCookie) {
-      try {
-        const parsed = JSON.parse(userDataCookie);
-        if (parsed && parsed.email) {
-          return { success: true, user: parsed };
-        }
-      } catch (_) {
-      }
-    }
-    const authToken = getCookie(event, "auth_token");
-    if (authToken) {
-      const backendCandidates = [
-        "http://172.19.0.4:8000/auth/me",
-        "http://172.19.0.4:8000/auth/users/me",
-        "http://172.19.0.4:8000/api/auth/me"
-      ];
-      for (const url of backendCandidates) {
-        try {
-          const r = await fetch(url, {
-            headers: { "Authorization": `Bearer ${authToken}`, "Accept": "application/json" }
-          });
-          if (r.ok) {
-            const u = await r.json().catch(() => ({}));
-            const user = (u == null ? void 0 : u.user) || u || {};
-            if (user && (user.email || user.id || user.name)) {
-              return { success: true, user };
-            }
-          }
-        } catch (_) {
-        }
-      }
-      return {
-        success: true,
-        user: { id: "session", email: "", name: "Benutzer", provider: "email" }
-      };
-    }
-    throw createError({ statusCode: 401, statusMessage: "Not authenticated" });
-  } catch (error) {
-    throw error;
+  var _a, _b, _c;
+  const backendUrl = buildBackendUrl(event, "/api/auth/status");
+  const headers = {
+    Accept: "application/json"
+  };
+  const cookies = getHeader(event, "cookie");
+  if (cookies) headers.Cookie = cookies;
+  const backendResponse = await fetch(backendUrl, { headers }).catch((err) => {
+    console.error("Auth me proxy error", err);
+    throw createError({ statusCode: 502, statusMessage: "Authentication service unavailable" });
+  });
+  const rawCookies = ((_b = (_a = backendResponse.headers).raw) == null ? void 0 : _b.call(_a)["set-cookie"]) || backendResponse.headers.get("set-cookie");
+  if (rawCookies) {
+    event.node.res.setHeader("set-cookie", Array.isArray(rawCookies) ? rawCookies : [rawCookies]);
   }
+  event.node.res.statusCode = backendResponse.status;
+  const text = await backendResponse.text();
+  let result = {};
+  if (text) {
+    try {
+      result = JSON.parse(text);
+    } catch (err) {
+      console.warn("Auth me: failed to parse backend response", err);
+    }
+  }
+  if (!backendResponse.ok || (result == null ? void 0 : result.authenticated) === false) {
+    const message = ((_c = result == null ? void 0 : result.error) == null ? void 0 : _c.message) || (result == null ? void 0 : result.message) || "Not authenticated";
+    throw createError({ statusCode: backendResponse.status || 401, statusMessage: message });
+  }
+  return { success: true, user: (result == null ? void 0 : result.user) || null };
 });
 
 export { me_get as default };

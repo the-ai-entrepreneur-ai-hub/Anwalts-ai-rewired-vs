@@ -144,6 +144,7 @@
 
 <script setup lang="ts">
 import { ref, nextTick } from 'vue'
+import ChatMessageFeedback from '~/components/ChatMessageFeedback.vue'
 
 const config = useRuntimeConfig()
 
